@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>FABFitsReader</title>
+<meta http-equiv="content-type"
+	content="text/html; charset=windows-1252">
+
+<link rel="stylesheet" type="text/css" href="style.css">
+
+<script src="FabFitsReader.js"></script>
+
+
+<script>
+
+function handleChange(myRadio){
+
+	document.getElementById('imgDiv').innerHTML = "nothing!";
+	
+// 	var reader = new FITSParser(myRadio.value, function (img) {
+// 		document.getElementById('imgDiv').innerHTML = "<img src="+img.src+">";
+// 	} );
+	
+	var reader = new FabFitsReader(myRadio.value, function (img) {
+		document.getElementById('imgDiv').innerHTML = "<img src="+img.src+">";
+	} );
+	
+	
+}
+
+function loadFromURL(){
+
+	document.getElementById('imgDiv').innerHTML = "nothing!";
+	
+	var url = document.getElementById('url').value;
+	
+	var reader = new FabFitsReader(url, function (img) {
+		document.getElementById('imgDiv').innerHTML = "<img src="+img.src+">";
+	} );
+	
+	
+}
+
+// function upload(){
+// 	var file = document.getElementById('local').files[0];
+// 	console.log(file);
+// }
+
+</script>
+</head>
+<body>
+
+
+<label for='url'>FITS URL: </label>
+<input type='text' name='url' id='url' size='100'/>
+<input type='button' name='urlButton' onclick="loadFromURL();" value='go'/>
+<br>
+
+
+<!-- <label for='url'>local FITS: </label> -->
+<!-- <input type='file' name='local' id='local'/> -->
+<!-- <input type='button' name='urlButton' onclick="upload();" value='go'/> -->
+<!-- <br> -->
+
+
+
+
+<!--  http://skies.esac.esa.int/pla/LFI_SkyMap_070_1024_R3_00_full_smooth_HiPS/Norder3/Dir0/Npix293.png -->
+<!--  http://skies.esac.esa.int/pla/LFI_SkyMap_070_1024_R3_00_full_smooth_HiPS/Norder3/Dir0/Npix293.fits -->
+<input type='radio' name='fits' onclick="handleChange(this);" id='1' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/lfi-070-smooth/Npix293.fits' onChange>
+<label for='1'>Planck lfi-070-smooth sample 1 </label>
+<br>
+<!--  http://skies.esac.esa.int/pla/LFI_SkyMap_070_1024_R3_00_full_smooth_HiPS/Norder3/Dir0/Npix304.png -->
+<!--  http://skies.esac.esa.int/pla/LFI_SkyMap_070_1024_R3_00_full_smooth_HiPS/Norder3/Dir0/Npix304.fits -->
+<input type='radio' name='fits' onclick="handleChange(this);" id='2' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/lfi-070-smooth/Npix304.fits'>
+<label for='2'>Planck lfi-070-smooth sample 2</label>
+<br>
+
+<!--  http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix278.png -->
+<!--  http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix278.fits -->
+<input type='radio' name='fits' onclick="handleChange(this);" id='3' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/herschel/spire250norm/Npix278.fits'>
+<label for='3'>Herschel hips250_pnorm_allsky sample 1</label>
+<br>
+<input type='radio' name='fits' onclick="handleChange(this);" id='4' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/herschel/spire250norm/Npix281.fits'>
+<label for='4'>Herschel hips250_pnorm_allsky sample 2</label>
+<br>
+<input type='radio' name='fits' onclick="handleChange(this);" id='5' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/herschel/spire250norm/Npix282.fits'>
+<label for='5'>Herschel hips250_pnorm_allsky sample 3</label>
+<br>
+<br>
+<br>
+
+<input type='radio' name='fits' onclick="handleChange(this);" id='2' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/unknown/Npix19.fits'>
+<label for='6'>Planck unknown sample 1</label>
+<br>
+<input type='radio' name='fits' onclick="handleChange(this);" id='2' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/unknown/Npix31.fits'>
+<label for='7'>Planck unknown sample 2</label>
+<br>
+<input type='radio' name='fits' onclick="handleChange(this);" id='2' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/unknown/Npix237.fits'>
+<label for='8'>Planck unknown sample 3</label>
+<br>
+<input type='radio' name='fits' onclick="handleChange(this);" id='2' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/unknown/Npix259.fits'>
+<label for='9'>Planck unknown sample 4</label>
+<br>
+<input type='radio' name='fits' onclick="handleChange(this);" id='2' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/unknown/Npix356.fits'>
+<label for='10'>Planck unknown sample 5</label>
+<br>
+<input type='radio' name='fits' onclick="handleChange(this);" id='2' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/unknown/Npix416.fits'>
+<label for='11'>Planck unknown sample 6</label>
+<br>
+
+<div id='imgDiv'>
+</div>
+
+</body>
+</html>
