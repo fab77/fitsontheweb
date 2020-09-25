@@ -14,53 +14,79 @@
 
 <script>
 
-function handleChange(myRadio){
+	var reader;
 
-	document.getElementById('imgDiv').innerHTML = "nothing!";
-	
-	var colorMaps = new ColorMaps();
-	
-	var reader = new FabFitsReader(myRadio.value, colorMaps.getMap('planck'), function (img) {
-		document.getElementById('imgDiv').innerHTML = "<img src="+img.src+">";
-	} );
-	
-	
-}
+	function handleChange(myRadio){
 
-function loadFromURL(){
+		let cme = document.getElementById("colorMaps");
+		let colorMap = cme.options[cme.selectedIndex].value;
+		
+		let tfe = document.getElementById("transFunction");
+		let tFunction = tfe.options[tfe.selectedIndex].value;
+		
+		document.getElementById('imgDiv').innerHTML = "nothing!";
+		reader = new FabFitsReader(myRadio.value, colorMap, tFunction, -3.034, 5.47, function (img) {
+			document.getElementById('imgDiv').innerHTML = "<img src="+img.src+">";
+		});
+	
+	}
 
-	document.getElementById('imgDiv').innerHTML = "nothing!";
-	
-	var url = document.getElementById('url').value;
-	
-	var reader = new FabFitsReader(url, function (img) {
-		document.getElementById('imgDiv').innerHTML = "<img src="+img.src+">";
-	} );
-	
-	
-}
+	function changeColorMap() {
+		
+		let e = document.getElementById("colorMaps");
+		let strUser = e.options[e.selectedIndex].value;
+		reader.applyColorMap(strUser);
+		document.getElementById('imgDiv').innerHTML = "<img src="+reader.img.src+">";
+	}
 
-// function upload(){
-// 	var file = document.getElementById('local').files[0];
-// 	console.log(file);
-// }
+	function changeTransFunction(){
+		let e = document.getElementById("transFunction");
+		let strUser = e.options[e.selectedIndex].value;
+		reader.applyTransferFunction(strUser);
+		document.getElementById('imgDiv').innerHTML = "<img src="+reader.img.src+">";
+	}
 
 </script>
 </head>
 <body>
 
-
 <label for='url'>FITS URL: </label>
 <input type='text' name='url' id='url' size='100'/>
 <input type='button' name='urlButton' onclick="loadFromURL();" value='go'/>
+<br><br><br>
+
+<div>
+	<label for="colorMaps">Choose a color map:</label>
+
+	<select name="colorMaps" id="colorMaps" class="colorMaps" onchange="changeColorMap()">
+	    <option value="planck">Planck</option>
+	    <option value="grayscale">Grayscale</option>
+	    <option value="eosb">EOSB</option>
+	    <option value="rainbow">Rainbow</option>
+	    <option value="cmb">CMB</option>
+	    <option value="cubehelix">Cubehelix</option>
+	</select>
+
+</div>
+<br>
+<div>
+	<label for="transFunction">Choose a color map:</label>
+
+	<select name="transFunction" id="transFunction" class="transFunction" onchange="changeTransFunction()">
+	    <option value="linear">linear</option>
+	    <option value="log">log</option>
+	    <option value="sqrt">sqrt</option>
+	</select>
+
+</div>
+<br>
 <br>
 
+<div id='imgDiv'>
+</div>
 
-<!-- <label for='url'>local FITS: </label> -->
-<!-- <input type='file' name='local' id='local'/> -->
-<!-- <input type='button' name='urlButton' onclick="upload();" value='go'/> -->
-<!-- <br> -->
-
+<br>
+<br>
 
 
 
@@ -74,7 +100,6 @@ function loadFromURL(){
 <input type='radio' name='fits' onclick="handleChange(this);" id='2' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/lfi-070-smooth/Npix304.fits'>
 <label for='2'>Planck lfi-070-smooth sample 2 (npix304)</label>
 <br>
-
 <!--  http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix278.png -->
 <!--  http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix278.fits -->
 <input type='radio' name='fits' onclick="handleChange(this);" id='3' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/herschel/spire250norm/Npix278.fits'>
@@ -86,9 +111,6 @@ function loadFromURL(){
 <input type='radio' name='fits' onclick="handleChange(this);" id='5' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/herschel/spire250norm/Npix282.fits'>
 <label for='5'>Herschel hips250_pnorm_allsky sample 3 (npix282)</label>
 <br>
-<br>
-<br>
-
 <input type='radio' name='fits' onclick="handleChange(this);" id='2' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/unknown/Npix19.fits'>
 <label for='6'>Planck unknown sample 1 (npix19)</label>
 <br>
@@ -108,8 +130,8 @@ function loadFromURL(){
 <label for='11'>Planck unknown sample 6 (npix416)</label>
 <br>
 
-<div id='imgDiv'>
-</div>
+
+
 
 </body>
 </html>
