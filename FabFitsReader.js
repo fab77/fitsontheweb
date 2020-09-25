@@ -59,7 +59,7 @@ class FabFitsReader {
 		}
 		
 		var xhr = new XMLHttpRequest();
-		xhr.open("GET", url, false);
+		xhr.open("GET", url, true);
 	    xhr.overrideMimeType("text/plain; charset=x-user-defined");
 	    
 	    xhr.onload = function() {

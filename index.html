@@ -45,6 +45,24 @@
 		reader.applyTransferFunction(strUser);
 		document.getElementById('imgDiv').innerHTML = "<img src="+reader.img.src+">";
 	}
+	
+	function loadFromURL(){
+
+		let cme = document.getElementById("colorMaps");
+		let colorMap = cme.options[cme.selectedIndex].value;
+		
+		let tfe = document.getElementById("transFunction");
+		let tFunction = tfe.options[tfe.selectedIndex].value;
+		
+		
+		let url = document.getElementById('url').value;
+		
+		document.getElementById('imgDiv').innerHTML = "nothing!";
+		reader = new FabFitsReader(url, colorMap, tFunction, -3.034, 5.47, function (img) {
+			document.getElementById('imgDiv').innerHTML = "<img src="+img.src+">";
+		});
+	
+	}
 
 </script>
 </head>
