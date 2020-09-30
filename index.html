@@ -61,7 +61,10 @@
 				
 				let e = document.getElementById("colorMaps");
 				let strUser = e.options[e.selectedIndex].value;
-				reader.applyColorMap(strUser);
+				
+				let inverse = document.getElementById("inverse").checked;
+
+				reader.applyColorMap(strUser, inverse);
 				document.getElementById('imgDiv').innerHTML = "<img src="+reader.img.src+">";
 			}
 		
@@ -163,6 +166,8 @@
 			    <option value="cubehelix">Cubehelix</option>
 			</select>
 		
+			<input type="checkbox" id="inverse" name="inverse" onchange="changeColorMap()">
+			<label for="inverse">Inverse</label><br>
 		</div>
 		<br>
 		<div>
@@ -214,7 +219,7 @@
 		
 		
 		
-		Some available smaples:
+		Some samples:
 		<input type='radio' name='fits' onclick="handleChange(this);" id='1' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/lfi-070-smooth/Npix293.fits'>
 		<label for='1'>
 			Planck lfi-070-smooth sample 1 FITS taken from:
@@ -223,7 +228,11 @@
 			<br>Image preview from png/jpeg:
 			<br><img src="http://skies.esac.esa.int/pla/LFI_SkyMap_070_1024_R3_00_full_smooth_HiPS/Norder3/Dir0/Npix293.png"/>
 		</label>
+		http://skies.esac.esa.int/pla/LFI_SkyMap_070_1024_R3_00_full_smooth_HiPS/Norder3/Dir0/Npix293.png
+		<br>http://skies.esac.esa.int/pla/LFI_SkyMap_070_1024_R3_00_full_smooth_HiPS/Norder3/Dir0/Npix293.fits
 		<br>
+		<br>
+		
 		<input type='radio' name='fits' onclick="handleChange(this);" id='2' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/lfi-070-smooth/Npix304.fits'>
 		<label for='2'>
 			Planck lfi-070-smooth sample 2 FITS taken from:
@@ -232,7 +241,11 @@
 			<br>Image preview from png/jpeg:
 			<br><img src="http://skies.esac.esa.int/pla/LFI_SkyMap_070_1024_R3_00_full_smooth_HiPS/Norder3/Dir0/Npix304.png"/>
 		</label>
+		http://skies.esac.esa.int/pla/LFI_SkyMap_070_1024_R3_00_full_smooth_HiPS/Norder3/Dir0/Npix304.png
+		<br>http://skies.esac.esa.int/pla/LFI_SkyMap_070_1024_R3_00_full_smooth_HiPS/Norder3/Dir0/Npix304.fits
 		<br>
+		<br>
+		
 		<input type='radio' name='fits' onclick="handleChange(this);" id='3' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/herschel/spire250norm/Npix278.fits'>
 		<label for='3'>
 			Herschel hips250_pnorm_allsky sample 1 FITS taken from:
@@ -241,7 +254,11 @@
 			<br>Image preview from png/jpeg (http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix278.png):
 			<br><img src="http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix278.png"/>
 		</label>
+		http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix278.png
+		<br>http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix278.fits
 		<br>
+		<br>
+		
 		<input type='radio' name='fits' onclick="handleChange(this);" id='4' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/herschel/spire250norm/Npix281.fits'>
 		<label for='4'>
 			Herschel hips250_pnorm_allsky sample 2 taken from:
@@ -250,7 +267,11 @@
 			<br>Image preview from png/jpeg (http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix281.png):
 			<br><img src="http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix281.png"/>
 		</label>
+		http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix281.png
+		<br>http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix281.fits
 		<br>
+		<br>
+		
 		<input type='radio' name='fits' onclick="handleChange(this);" id='5' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/herschel/spire250norm/Npix282.fits'>
 		<label for='5'>
 			Herschel hips250_pnorm_allsky sample 3 taken from:
@@ -259,7 +280,11 @@
 			<br>Image preview from png/jpeg (http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix282.png):
 			<br><img src="http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix282.png"/>
 		</label>
+		http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix282.png
+		<br>http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix282.fits
 		<br>
+		<br>
+		
 		<input type='radio' name='fits' onclick="handleChange(this);" id='6' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/unknown/Npix19.fits'>
 		<label for='6'>
 			Planck unknown sample 1 (npix31/norder3) taken from:
@@ -302,6 +327,7 @@
 			<br>
 			<img src="http://hst.esac.esa.int/ehst-sl-server/servlet/data-action?RETRIEVAL_TYPE=POSTCARD&OBSERVATION_ID=x0c70103t" />
 		</label>
+		http://hst.esac.esa.int/ehst-sl-server/servlet/data-action?RETRIEVAL_TYPE=POSTCARD&OBSERVATION_ID=x0c70103t
 		<br>
 	
 	

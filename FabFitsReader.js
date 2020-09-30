@@ -346,7 +346,7 @@ class FabFitsReader {
     	return p_val;
 	}
 	
-	applyScaleFunction(tFunc){
+	applyScaleFunction(tFunc, inverse){
 		var self = this;
 		this.tfPhysicalValues = [];
 		if (tFunc == 'log'){
@@ -360,12 +360,12 @@ class FabFitsReader {
 		}else if (tFunc == 'linear'){
 			this.tfPhysicalValues = this.physicalValues;
 		}
-		this.img = this.applyColorMap(this.colorMap);
+		this.img = this.applyColorMap(this.colorMap, inverse);
 		return this.img;
 	}
 	
 	
-	applyColorMap(colorMapName){
+	applyColorMap(colorMapName, inverse){
 		
 		this.colorMap = colorMapName;
 		var c=document.createElement('canvas');
@@ -384,7 +384,7 @@ class FabFitsReader {
     		for (col=0;col<this.height;col++){
     			pos = ((this.width-row)*this.height+col)*4;
 //    			colors = this.colorImage2(this.physicalValues[i],this.PVMIN, this.PVMAX);
-    			colors = this.colorImage(this.tfPhysicalValues[i], colorMapName);
+    			colors = this.colorImage(this.tfPhysicalValues[i], colorMapName, inverse);
 
     			imgData.data[pos] = colors.r;
     			imgData.data[pos+1] = colors.g;
@@ -452,7 +452,7 @@ class FabFitsReader {
 		return data.charCodeAt(offset + dataOffset) & 0xFF;
 	}
 	
-	colorImage (v, colorMapName){
+	colorImage (v, colorMapName, inverse){
 		
 		let min = this.PVMIN;
 		let max = this.PVMAX;
@@ -474,6 +474,13 @@ class FabFitsReader {
 		}
 		
 		if (colorMapName == 'grayscale'){
+			if (inverse){
+				return {
+					r: (255 - idx),
+					g: (255 - idx),
+					b: (255 - idx)
+				};
+			}
 			
 			return {
 				r:idx,
@@ -481,6 +488,14 @@ class FabFitsReader {
 				b:idx
 			};
 		}else{
+			if (inverse){
+				return {
+					r: (255 - colorMap.r[idx]),
+					g: (255 - colorMap.g[idx]),
+					b: (255 - colorMap.b[idx])
+				};
+			}
+			
 			return {
 				r:colorMap.r[idx],
 				g:colorMap.g[idx],
