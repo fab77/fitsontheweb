@@ -1,155 +1,311 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>FABFitsReader</title>
-<meta http-equiv="content-type"
-	content="text/html; charset=windows-1252">
-
-<link rel="stylesheet" type="text/css" href="style.css">
-
-<script src="ColorMaps.js"></script>
-<script src="FabFitsReader.js"></script>
-
-
-<script>
-
-	var reader;
-
-	function handleChange(myRadio){
-
-		let cme = document.getElementById("colorMaps");
-		let colorMap = cme.options[cme.selectedIndex].value;
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
 		
-		let tfe = document.getElementById("transFunction");
-		let tFunction = tfe.options[tfe.selectedIndex].value;
-		
-		document.getElementById('imgDiv').innerHTML = "nothing!";
-		reader = new FabFitsReader(myRadio.value, colorMap, tFunction, -3.034, 5.47, function (img) {
-			document.getElementById('imgDiv').innerHTML = "<img src="+img.src+">";
-		});
-	
-	}
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-	function changeColorMap() {
+	    <!-- Bootstrap CSS -->
+	    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+	    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"  media="screen">
+	    
+		<title>FABFitsOnTheWeb</title>
 		
-		let e = document.getElementById("colorMaps");
-		let strUser = e.options[e.selectedIndex].value;
-		reader.applyColorMap(strUser);
-		document.getElementById('imgDiv').innerHTML = "<img src="+reader.img.src+">";
-	}
-
-	function changeTransFunction(){
-		let e = document.getElementById("transFunction");
-		let strUser = e.options[e.selectedIndex].value;
-		reader.applyTransferFunction(strUser);
-		document.getElementById('imgDiv').innerHTML = "<img src="+reader.img.src+">";
-	}
-	
-	function loadFromURL(){
-
-		let cme = document.getElementById("colorMaps");
-		let colorMap = cme.options[cme.selectedIndex].value;
+		<meta http-equiv="content-type" content="text/html; charset=windows-1252">
 		
-		let tfe = document.getElementById("transFunction");
-		let tFunction = tfe.options[tfe.selectedIndex].value;
+		<link rel="stylesheet" type="text/css" href="style.css">
+		
+		<script src="ColorMaps.js"></script>
+		<script src="FabFitsReader.js"></script>
+		<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+		<script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+		<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
 		
 		
-		let url = document.getElementById('url').value;
+		<script>
 		
-		document.getElementById('imgDiv').innerHTML = "nothing!";
-		reader = new FabFitsReader(url, colorMap, tFunction, -3.034, 5.47, function (img) {
-			document.getElementById('imgDiv').innerHTML = "<img src="+img.src+">";
-		});
-	
-	}
+			var reader;
+		
+			function handleChange(myRadio){
+		
+				let cme = document.getElementById("colorMaps");
+				let colorMap = cme.options[cme.selectedIndex].value;
+				
+				let tfe = document.getElementById("scaleFunction");
+				let tFunction = tfe.options[tfe.selectedIndex].value;
+				
+				document.getElementById('imgDiv').innerHTML = "nothing!";
+// 				reader = new FabFitsReader(myRadio.value, colorMap, tFunction, 0.0966, 2.461, function (img) {
+				reader = new FabFitsReader(myRadio.value, colorMap, tFunction, null, null, function (img) {
+					document.getElementById('imgDiv').innerHTML = "<img src="+img.src+">";
+					
+					var slidermin = document.getElementById ("range-min");
+					slidermin.setAttribute ("min", reader.min);
+					slidermin.setAttribute ("max", reader.max);
+					slidermin.setAttribute ("value", reader.min);
+					
+					var slidermax = document.getElementById ("range-max");
+					slidermax.setAttribute ("min", reader.min);
+					slidermax.setAttribute ("max", reader.max);
+					slidermax.setAttribute ("value", reader.max);
+					
+// 					alert("min: "+reader.min+" max: "+reader.max);
+				});
+				
+				
+			
+				
+			}
+		
+			function changeColorMap() {
+				
+				let e = document.getElementById("colorMaps");
+				let strUser = e.options[e.selectedIndex].value;
+				reader.applyColorMap(strUser);
+				document.getElementById('imgDiv').innerHTML = "<img src="+reader.img.src+">";
+			}
+		
+			function changeScaleFunction(){
+				let e = document.getElementById("scaleFunction");
+				let strUser = e.options[e.selectedIndex].value;
+				
+				if (strUser.startsWith("-")){
+					alert("Sorry, functionality not implemented yet.");
+				}else{
+					reader.applyScaleFunction(strUser);
+					document.getElementById('imgDiv').innerHTML = "<img src="+reader.img.src+">";	
+				}
+				
+				
+			}
+			
+			function loadFromURL(){
+		
+				let cme = document.getElementById("colorMaps");
+				let colorMap = cme.options[cme.selectedIndex].value;
+				
+				let tfe = document.getElementById("scaleFunction");
+				let tFunction = tfe.options[tfe.selectedIndex].value;
+				
+				
+				let url = document.getElementById('url').value;
+				
+				document.getElementById('imgDiv').innerHTML = "nothing!";
+				reader = new FabFitsReader(url, colorMap, tFunction, 0.0966, 2.461, function (img) {
+					document.getElementById('imgDiv').innerHTML = "<img src="+img.src+">";
+				});
+			
+			}
+			
+			var isDragging = true;
 
-</script>
-</head>
+			var r1 = document.getElementById("range-min");
+			var r2 = document.getElementById("range-max");
+			
+			document.addEventListener('mousedown', e => {
+// 				console.log("down 1");
+				isDragging = true;
+			});
+			
+			
+			document.addEventListener('mouseup', e => {
+// 				console.log("up 1");
+				isDragging = false;
+			});
+			
+			
+			let r1_val;
+			let r2_val;
+			
+			function checkMinMax(){
+				
+				let r1_val = document.getElementById("range-min").value;
+				let r2_val = document.getElementById("range-max").value;
+				let min = Math.min(r1_val, r2_val);
+				let max = Math.max(r1_val, r2_val);
+				reader.min = min;
+				reader.max = max;
+
+			}
+		
+			function reprocess(){
+				
+				let r1_val = document.getElementById("range-min").value;
+				let r2_val = document.getElementById("range-max").value;
+				let min = Math.min(r1_val, r2_val);
+				let max = Math.max(r1_val, r2_val);
+
+				reader.readPayload (min, max);
+				document.getElementById('imgDiv').innerHTML = "<img src="+reader.img.src+">";
+
+			}
+		</script>
+		
+	</head>
 <body>
 
-<label for='url'>FITS URL: </label>
-<input type='text' name='url' id='url' size='100'/>
-<input type='button' name='urlButton' onclick="loadFromURL();" value='go'/>
-<br><br><br>
+    
+	<div id="container">
+		<label for='url'>FITS URL: </label>
+		<input type='text' name='url' id='url' size='100'/>
+		<input type='button' name='urlButton' onclick="loadFromURL();" value='go'/>
+		<br><br><br>
+		
+		<div>
+			<label for="colorMaps">Choose a color map:</label>
+		
+			<select name="colorMaps" id="colorMaps" class="colorMaps" onchange="changeColorMap()">
+			    <option value="grayscale">Grayscale</option>
+			    <option value="planck">Planck</option>
+			    <option value="eosb">EOSB</option>
+			    <option value="rainbow">Rainbow</option>
+			    <option value="cmb">CMB</option>
+			    <option value="cubehelix">Cubehelix</option>
+			</select>
+		
+		</div>
+		<br>
+		<div>
+			<label for="scaleFunction">Choose a scale function:</label>
+		
+			<select name="scaleFunction" id="scaleFunction" class="scaleFunction" onchange="changeScaleFunction()">
+			    <option value="linear">linear</option>
+			    <option value="log">log</option>
+			    <option value="-power">-power-</option>
+			    <option value="sqrt">sqrt</option>
+			    <option value="-squared">-squared-</option>
+			    <option value="-asinh">-asinh-</option>
+			    <option value="-sinh">-sinh-</option>
+			    <option value="-histogram">-histogram-</option>
+			</select>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<select name="scaleFunction" id="scaleFunction" class="scaleFunction" onchange="changeScaleFunction()">
+			    <option value="minmax">minmax</option>
+			    <option value="-zscale">-zscale-</option>
+			</select>
+		</div>
+		<br>
+		
+		<label for="testest">Pixels scale:<br>
+			<i style="color:red">
+				N.B.: small bug in the UI: labels Min and Max not updating the first time the FITS gets loaded.
+				<br>This doesn't affect the real values computation. 
+				<br>Once the sliders are dragged, the Min and Max labels get updated.
+			</i>
+		</label>
+		<div id="testest">
+			<div data-role="main" class="ui-content">
+				<div data-role="rangeslider">
+					<label for="range-min">Min:</label>
+					<input type="range" name="range-min" id="range-min" value="0" min="0" max="100" step="0.0001" onchange="checkMinMax();" />
+					<label for="range-max">Max:</label>
+					<input type="range" name="range-max" id="range-max" value="100" min="0" max="100" step="0.0001" onchange="checkMinMax();" />
+				</div>
+				<input type="button" name="minmax" id="minmax" value="go" onclick="reprocess();" />
+			</div>
+		</div>
+		<br>
+		
+		<div id='imgDiv'>
+		</div>
+		
+		<br>
+		<br>
+		
+		
+		
+		Some available smaples:
+		<input type='radio' name='fits' onclick="handleChange(this);" id='1' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/lfi-070-smooth/Npix293.fits'>
+		<label for='1'>
+			Planck lfi-070-smooth sample 1 FITS taken from:
+			<br>http://skies.esac.esa.int/pla/LFI_SkyMap_070_1024_R3_00_full_smooth_HiPS/Norder3/Dir0/Npix293.fits
+			<br>
+			<br>Image preview from png/jpeg:
+			<br><img src="http://skies.esac.esa.int/pla/LFI_SkyMap_070_1024_R3_00_full_smooth_HiPS/Norder3/Dir0/Npix293.png"/>
+		</label>
+		<br>
+		<input type='radio' name='fits' onclick="handleChange(this);" id='2' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/lfi-070-smooth/Npix304.fits'>
+		<label for='2'>
+			Planck lfi-070-smooth sample 2 FITS taken from:
+			<br>http://skies.esac.esa.int/pla/LFI_SkyMap_070_1024_R3_00_full_smooth_HiPS/Norder3/Dir0/Npix304.fits
+			<br>
+			<br>Image preview from png/jpeg:
+			<br><img src="http://skies.esac.esa.int/pla/LFI_SkyMap_070_1024_R3_00_full_smooth_HiPS/Norder3/Dir0/Npix304.png"/>
+		</label>
+		<br>
+		<input type='radio' name='fits' onclick="handleChange(this);" id='3' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/herschel/spire250norm/Npix278.fits'>
+		<label for='3'>
+			Herschel hips250_pnorm_allsky sample 1 FITS taken from:
+			<br>http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix278.fits
+			<br>
+			<br>Image preview from png/jpeg (http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix278.png):
+			<br><img src="http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix278.png"/>
+		</label>
+		<br>
+		<input type='radio' name='fits' onclick="handleChange(this);" id='4' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/herschel/spire250norm/Npix281.fits'>
+		<label for='4'>
+			Herschel hips250_pnorm_allsky sample 2 taken from:
+			<br>http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix281.fits
+			<br>
+			<br>Image preview from png/jpeg (http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix281.png):
+			<br><img src="http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix281.png"/>
+		</label>
+		<br>
+		<input type='radio' name='fits' onclick="handleChange(this);" id='5' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/herschel/spire250norm/Npix282.fits'>
+		<label for='5'>
+			Herschel hips250_pnorm_allsky sample 3 taken from:
+			<br>http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix282.fits
+			<br>
+			<br>Image preview from png/jpeg (http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix282.png):
+			<br><img src="http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix282.png"/>
+		</label>
+		<br>
+		<input type='radio' name='fits' onclick="handleChange(this);" id='6' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/unknown/Npix19.fits'>
+		<label for='6'>
+			Planck unknown sample 1 (npix31/norder3) taken from:
+			<br>I don't know! Somewhere from ESASky eheh
+		</label>
+		<br>
+		<input type='radio' name='fits' onclick="handleChange(this);" id='7' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/unknown/Npix31.fits'>
+		<label for='7'>
+			Planck unknown sample 2 (npix31/norder3) taken from:
+			<br>I don't know! Somewhere from ESASky eheh
+		</label>
+		<br>
+		<input type='radio' name='fits' onclick="handleChange(this);" id='8' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/unknown/Npix237.fits'>
+		<label for='8'>
+			Planck unknown sample 3 (npix237/norder3) taken from:
+			<br>I don't know! Somewhere from ESASky eheh
+		</label>
+		<br>
+		<input type='radio' name='fits' onclick="handleChange(this);" id='9' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/unknown/Npix259.fits'>
+		<label for='9'>
+			Planck unknown sample 4 (npix259/norder3) taken from:
+			<br>I don't know! Somewhere from ESASky eheh
+		</label>
+		<br>
+		<input type='radio' name='fits' onclick="handleChange(this);" id='10' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/unknown/Npix356.fits'>
+		<label for='10'>
+			Planck unknown sample 5 (npix356/norder3) taken from:
+			<br>I don't know! Somewhere from ESASky eheh
+		</label>
+		<br>
+		<input type='radio' name='fits' onclick="handleChange(this);" id='11' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/unknown/Npix416.fits'>
+		<label for='11'>
+			Planck unknown sample 5 (npix416/norder3) taken from:
+			<br>I don't know! Somewhere from ESASky eheh
+		</label>
+		<br>
+		<input type='radio' name='fits' onclick="handleChange(this);" id='12' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/FITS/hst/x0c70103t_c1f.fits'>
+		<label for='12'>
+			HST sample1 (normal FITS, no HiPS) taken from the eHST archive. Observation x0c70103t_c1f
+			<br>
+			<img src="http://hst.esac.esa.int/ehst-sl-server/servlet/data-action?RETRIEVAL_TYPE=POSTCARD&OBSERVATION_ID=x0c70103t" />
+		</label>
+		<br>
+	
+	
 
-<div>
-	<label for="colorMaps">Choose a color map:</label>
-
-	<select name="colorMaps" id="colorMaps" class="colorMaps" onchange="changeColorMap()">
-	    <option value="planck">Planck</option>
-	    <option value="grayscale">Grayscale</option>
-	    <option value="eosb">EOSB</option>
-	    <option value="rainbow">Rainbow</option>
-	    <option value="cmb">CMB</option>
-	    <option value="cubehelix">Cubehelix</option>
-	</select>
-
-</div>
-<br>
-<div>
-	<label for="transFunction">Choose a color map:</label>
-
-	<select name="transFunction" id="transFunction" class="transFunction" onchange="changeTransFunction()">
-	    <option value="linear">linear</option>
-	    <option value="log">log</option>
-	    <option value="sqrt">sqrt</option>
-	</select>
-
-</div>
-<br>
-<br>
-
-<div id='imgDiv'>
-</div>
-
-<br>
-<br>
-
-
-
-<!--  http://skies.esac.esa.int/pla/LFI_SkyMap_070_1024_R3_00_full_smooth_HiPS/Norder3/Dir0/Npix293.png -->
-<!--  http://skies.esac.esa.int/pla/LFI_SkyMap_070_1024_R3_00_full_smooth_HiPS/Norder3/Dir0/Npix293.fits -->
-<input type='radio' name='fits' onclick="handleChange(this);" id='1' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/lfi-070-smooth/Npix293.fits' onChange>
-<label for='1'>Planck lfi-070-smooth sample 1 (npix293)</label>
-<br>
-<!--  http://skies.esac.esa.int/pla/LFI_SkyMap_070_1024_R3_00_full_smooth_HiPS/Norder3/Dir0/Npix304.png -->
-<!--  http://skies.esac.esa.int/pla/LFI_SkyMap_070_1024_R3_00_full_smooth_HiPS/Norder3/Dir0/Npix304.fits -->
-<input type='radio' name='fits' onclick="handleChange(this);" id='2' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/lfi-070-smooth/Npix304.fits'>
-<label for='2'>Planck lfi-070-smooth sample 2 (npix304)</label>
-<br>
-<!--  http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix278.png -->
-<!--  http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix278.fits -->
-<input type='radio' name='fits' onclick="handleChange(this);" id='3' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/herschel/spire250norm/Npix278.fits'>
-<label for='3'>Herschel hips250_pnorm_allsky sample 1 (npix278)</label>
-<br>
-<input type='radio' name='fits' onclick="handleChange(this);" id='4' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/herschel/spire250norm/Npix281.fits'>
-<label for='4'>Herschel hips250_pnorm_allsky sample 2 (npix281)</label>
-<br>
-<input type='radio' name='fits' onclick="handleChange(this);" id='5' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/herschel/spire250norm/Npix282.fits'>
-<label for='5'>Herschel hips250_pnorm_allsky sample 3 (npix282)</label>
-<br>
-<input type='radio' name='fits' onclick="handleChange(this);" id='2' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/unknown/Npix19.fits'>
-<label for='6'>Planck unknown sample 1 (npix19)</label>
-<br>
-<input type='radio' name='fits' onclick="handleChange(this);" id='2' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/unknown/Npix31.fits'>
-<label for='7'>Planck unknown sample 2 (npix31)</label>
-<br>
-<input type='radio' name='fits' onclick="handleChange(this);" id='2' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/unknown/Npix237.fits'>
-<label for='8'>Planck unknown sample 3 (npix237)</label>
-<br>
-<input type='radio' name='fits' onclick="handleChange(this);" id='2' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/unknown/Npix259.fits'>
-<label for='9'>Planck unknown sample 4 (npix259)</label>
-<br>
-<input type='radio' name='fits' onclick="handleChange(this);" id='2' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/unknown/Npix356.fits'>
-<label for='10'>Planck unknown sample 5 (npix356)</label>
-<br>
-<input type='radio' name='fits' onclick="handleChange(this);" id='2' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/unknown/Npix416.fits'>
-<label for='11'>Planck unknown sample 6 (npix416)</label>
-<br>
-
-
-
-
+	</div>
 </body>
 </html>
