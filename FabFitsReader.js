@@ -250,12 +250,17 @@ class FabFitsReader {
 //			p_val = this.getPhysicalNumber(i);
 			if (this.BITPIX == 16){ // 16-bit 2's complement binary integer
 				val = this.parse16bit2sComplement(this.data, i, true); //IEEE 754 half precision (float16)
+			}else if (this.BITPIX == 32){ // 16-bit 2's complement binary integer
+				val = this.parse32bit2sComplement(this.data, i, true); //IEEE 754 half precision (float16)
 			}else if (this.BITPIX == -32){	// 32 bit single precision 
 				val = this.parse32bitSinglePrecisionFloatingPoint (this.data, i, true); //IEEE 754 float32 is always big-endian	
 				if (val != 0){
 					val = (1.0+((val&0x007fffff)/0x0800000)) * Math.pow(2,((val&0x7f800000)>>23) - 127); // long to float conversion
 //					val = (1.0+((val&0x007fffff)/(val&0x0800000)>>31)) * Math.pow(2,((val&0x7f800000)>>23) - 127);
 				}
+			}else{
+				alert("BITPIX "+this.BITPIX+" still not supported");
+				exit;
 			}
 			
 			
@@ -435,7 +440,7 @@ class FabFitsReader {
 		
 	    var s = (h & 0x8000) >> 15;
 	    var e = (h & 0x7C00) >> 10;
-	    var f = h & 0x03FF;
+	    var f = h & 0x03FF; // non usato ma forse va cambiato in 0x07FF
 
 	    var res = h & 0x0000FFFF;
 	    
@@ -446,6 +451,29 @@ class FabFitsReader {
 	    return res;
 
 	}
+
+	parse32bit2sComplement(data, offset) {
+		var byte1 = this.getByteAt(data, offset),
+		byte2 = this.getByteAt(data, offset + 1),
+		byte3 = this.getByteAt(data, offset + 2),
+		byte4 = this.getByteAt(data, offset + 3);
+		
+		var h = (byte1 << 24) | (byte2 << 16) | (byte3 << 8) | byte4;
+		
+	    var s = (h & 0x80000000) >> 31;
+	    var e = (h & 0x7FC00000) >> 23;
+	    var f =  h & 0x007FFFFF;
+
+	    var res = h & 0xFFFFFFFF;
+	    
+	    if (s){
+	    	res = (~h & 0xFFFFFFFF)  + 1;
+	    	return -1 * res;
+	    }
+	    return res;
+
+	}
+
 	
 	getByteAt (data, offset) {
 		var dataOffset = 0;

@@ -156,10 +156,6 @@
 
     
 	<div id="container">
-		<label for='url'>FITS URL: </label>
-		<input type='text' name='url' id='url' size='100'/>
-		<input type='button' name='urlButton' onclick="loadFromURL();" value='go'/>
-		<br><br><br>
 		
 		<div>
 			<label for="colorMaps">Choose a color map:</label>
@@ -224,7 +220,7 @@
 		<div id="result">
 			
 			
-			<div class="sampleCard">
+			<div class="prevCard">
 				<label for='imgDiv'>
 					computed image from FITS:
 				</label>
@@ -232,7 +228,7 @@
 				</div>
 			</div>
 			
-			<div class="sampleCard">
+			<div class="prevCard">
 				<label for='postcardDiv'>
 					Postcard (if any):
 				</label>
@@ -249,7 +245,13 @@
 		
 		
 		<div id="samples" >
-			
+			<div class="sampleCard">
+				<label for='url'>Try to load any FITS from a URL. Supported FITS at the moment are STSCI standard FITS twos-complement binary integer and IEEE single precision floating point. 
+				<br> In case you find an unsupported FITS, pls send an email to fgiordano(at)sciops.esa.int with the URL of the FITS. 
+				<br> FITS URL: </label>
+				<input type='text' name='url' id='url' size='100'/>
+				<input type='button' name='urlButton' onclick="loadFromURL();" value='go'/>
+			</div>
 			
 			<div class="sampleCard">
 				<input type='radio' name='fits' onclick="handleChange(this);" id='1' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/lfi-070-smooth/Npix293.fits'>
@@ -384,15 +386,33 @@
 				Min: <input type='text' name='min12' value=null id='min12'/>
 				Max: <input type='text' name='max12' value=null id='max12'/>
 				<label for='12'>
-					HST sample1 (normal FITS, no HiPS) taken from the eHST archive. Observation x0c70103t_c1f
+					HST sample1 (normal FITS, no HiPS) taken from the eHST archive. Observation x0c70103t
 				</label>
 				http://hst.esac.esa.int/ehst-sl-server/servlet/data-action?RETRIEVAL_TYPE=POSTCARD&OBSERVATION_ID=x0c70103t
 			</div>
+			
+			<div class="sampleCard">
+				<input type='radio' name='fits' onclick="handleChange(this);" id='13' value='input/FITS/hst/w1000403t_c0f.fits'>
+				<input type='hidden' name='postcard13' id='postcard13' value='http://hst.esac.esa.int/ehst-sl-server/servlet/data-action?RETRIEVAL_TYPE=POSTCARD&OBSERVATION_ID=w1000403t'/>
+				Min: <input type='text' name='min13' value=null id='min13'/>
+				Max: <input type='text' name='max13' value=null id='max13'/>
+				<label for='13'>
+					HST sample2 (normal FITS, no HiPS) taken from the eHST archive. Observation w0ck0101t
+				</label>
+				http://hst.esac.esa.int/ehst-sl-server/servlet/data-action?RETRIEVAL_TYPE=POSTCARD&OBSERVATION_ID=w1000403t
+			</div>
+			
+			
+			
+			
+			
 			<br>
 		</div>
-<!-- 		<label for='samples'> -->
-<!-- 			Some samples: -->
-<!-- 		</label> -->
+		<br>
+		<br>
+		<br>
+		
+		<br><br><br>
 	
 
 	</div>
