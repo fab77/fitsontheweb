@@ -2,3 +2,20 @@
 	width: 60%;
 	margin-left: 20%;
 }
+
+.sampleCard{
+	border: 1px solid;
+    width: 48%;
+    padding: 25px;
+    border-radius: 8px;
+    word-wrap: break-word;
+    float: left;
+    min-height: 420px;
+}
+
+#result{
+	height: 530px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	
+}

@@ -27,7 +27,14 @@
 			var reader;
 		
 			function handleChange(myRadio){
-		
+
+				let postcard = document.getElementById("postcard"+myRadio.id).value;
+				
+				let min = parseFloat(document.getElementById("min"+myRadio.id).value);
+				let max = parseFloat(document.getElementById("max"+myRadio.id).value);
+				
+// 				alert("min "+min+" max "+max);
+				
 				let cme = document.getElementById("colorMaps");
 				let colorMap = cme.options[cme.selectedIndex].value;
 				
@@ -36,7 +43,7 @@
 				
 				document.getElementById('imgDiv').innerHTML = "nothing!";
 // 				reader = new FabFitsReader(myRadio.value, colorMap, tFunction, 0.0966, 2.461, function (img) {
-				reader = new FabFitsReader(myRadio.value, colorMap, tFunction, null, null, function (img) {
+				reader = new FabFitsReader(myRadio.value, colorMap, tFunction, min, max, function (img) {
 					document.getElementById('imgDiv').innerHTML = "<img src="+img.src+">";
 					
 					var slidermin = document.getElementById ("range-min");
@@ -44,14 +51,16 @@
 					slidermin.setAttribute ("max", reader.max);
 					slidermin.setAttribute ("value", reader.min);
 					
+// 					alert("reader.min "+reader.min+" reader.max "+reader.max);
+					
 					var slidermax = document.getElementById ("range-max");
 					slidermax.setAttribute ("min", reader.min);
 					slidermax.setAttribute ("max", reader.max);
 					slidermax.setAttribute ("value", reader.max);
 					
-// 					alert("min: "+reader.min+" max: "+reader.max);
+// 					alert("reader.min "+reader.min+" reader.max "+reader.max);
 				});
-				
+				document.getElementById('postcardDiv').innerHTML = "<img src="+postcard+">";
 				
 			
 				
@@ -94,7 +103,7 @@
 				let url = document.getElementById('url').value;
 				
 				document.getElementById('imgDiv').innerHTML = "nothing!";
-				reader = new FabFitsReader(url, colorMap, tFunction, 0.0966, 2.461, function (img) {
+				reader = new FabFitsReader(url, colorMap, tFunction, null, null, function (img) {
 					document.getElementById('imgDiv').innerHTML = "<img src="+img.src+">";
 				});
 			
@@ -106,13 +115,11 @@
 			var r2 = document.getElementById("range-max");
 			
 			document.addEventListener('mousedown', e => {
-// 				console.log("down 1");
 				isDragging = true;
 			});
 			
 			
 			document.addEventListener('mouseup', e => {
-// 				console.log("up 1");
 				isDragging = false;
 			});
 			
@@ -211,125 +218,181 @@
 		</div>
 		<br>
 		
-		<div id='imgDiv'>
+		
+		
+		
+		<div id="result">
+			
+			
+			<div class="sampleCard">
+				<label for='imgDiv'>
+					computed image from FITS:
+				</label>
+				<div id='imgDiv'>
+				</div>
+			</div>
+			
+			<div class="sampleCard">
+				<label for='postcardDiv'>
+					Postcard (if any):
+				</label>
+				<div id='postcardDiv'>
+				</div>
+			</div>
+		
 		</div>
 		
-		<br>
-		<br>
 		
 		
+
+
 		
-		Some samples:
-		<input type='radio' name='fits' onclick="handleChange(this);" id='1' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/lfi-070-smooth/Npix293.fits'>
-		<label for='1'>
-			Planck lfi-070-smooth sample 1 FITS taken from:
-			<br>http://skies.esac.esa.int/pla/LFI_SkyMap_070_1024_R3_00_full_smooth_HiPS/Norder3/Dir0/Npix293.fits
+		
+		<div id="samples" >
+			
+			
+			<div class="sampleCard">
+				<input type='radio' name='fits' onclick="handleChange(this);" id='1' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/lfi-070-smooth/Npix293.fits'>
+				<input type='hidden' name='postcard1' id='postcard1' value='http://skies.esac.esa.int/pla/LFI_SkyMap_070_1024_R3_00_full_smooth_HiPS/Norder3/Dir0/Npix293.png'/>
+				Min: <input type='text' name='min1' value=0 id='min1'/>
+				Max: <input type='text' name='max1' value=3.5 id='max1'/>
+				<label for='1'>
+					FITS from HiPS: Planck lfi-070-smooth sample 1
+				</label>
+				http://skies.esac.esa.int/pla/LFI_SkyMap_070_1024_R3_00_full_smooth_HiPS/Norder3/Dir0/Npix293.png
+				<br>http://skies.esac.esa.int/pla/LFI_SkyMap_070_1024_R3_00_full_smooth_HiPS/Norder3/Dir0/Npix293.fits
+			</div>
+			
+			<div class="sampleCard">
+				<input type='radio' name='fits' onclick="handleChange(this);" id='2' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/lfi-070-smooth/Npix304.fits'>
+				<input type='hidden' name='postcard2' id='postcard2' value='http://skies.esac.esa.int/pla/LFI_SkyMap_070_1024_R3_00_full_smooth_HiPS/Norder3/Dir0/Npix304.png'/>
+				Min: <input type='text' name='min2' value=0 id='min2'/>
+				Max: <input type='text' name='max2' value=3.5 id='max2'/>
+				<label for='2'>
+					FITS from HiPS: Planck lfi-070-smooth sample 2
+				</label>
+				http://skies.esac.esa.int/pla/LFI_SkyMap_070_1024_R3_00_full_smooth_HiPS/Norder3/Dir0/Npix304.png
+				<br>http://skies.esac.esa.int/pla/LFI_SkyMap_070_1024_R3_00_full_smooth_HiPS/Norder3/Dir0/Npix304.fits
+			</div>
+			
+			
+			<div class="sampleCard">
+				<input type='radio' name='fits' onclick="handleChange(this);" id='3' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/herschel/spire250norm/Npix278.fits'>
+				<input type='hidden' name='postcard3' id='postcard3' value='http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix278.png'/>
+				Min: <input type='text' name='min3' value=0.0966 id='min3'/>
+				Max: <input type='text' name='max3' value=2.461 id='max3'/>
+				<label for='3'>
+					FITS from HiPS: Herschel hips250_pnorm_allsky sample 1
+				</label>
+				http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix278.png
+				<br>http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix278.fits
+			</div>
+			
+			<div class="sampleCard">
+				<input type='radio' name='fits' onclick="handleChange(this);" id='4' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/herschel/spire250norm/Npix281.fits'>
+				<input type='hidden' name='postcard4' id='postcard4' value='http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix281.png'/>
+				Min: <input type='text' name='min4' value=0.0966 id='min4'/>
+				Max: <input type='text' name='max4' value=2.461 id='max4'/>
+				<label for='4'>
+					FITS from HiPS: Herschel hips250_pnorm_allsky sample 2
+				</label>
+				http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix281.png
+				<br>http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix281.fits
+			</div>
+			
+			
+			<div class="sampleCard">
+				<input type='radio' name='fits' onclick="handleChange(this);" id='5' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/herschel/spire250norm/Npix282.fits'>
+				<input type='hidden' name='postcard5' id='postcard5' value='http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix282.png'/>
+				Min: <input type='text' name='min5' value=0.0966 id='min5'/>
+				Max: <input type='text' name='max5' value=2.461 id='max5'/>
+				<label for='5'>
+					FITS from HiPS: Herschel hips250_pnorm_allsky sample 3
+				</label>
+				http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix282.png
+				<br>http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix282.fits
+			</div>
+			
+			
+			<div class="sampleCard">
+				<input type='radio' name='fits' onclick="handleChange(this);" id='6' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/unknown/Npix19.fits'>
+				<input type='hidden' name='postcard6' id='postcard6' value=''/>
+				Min: <input type='text' name='min6' value=null id='min6'/>
+				Max: <input type='text' name='max6' value=null id='max6'/>
+				<label for='6'>
+					FITS from HiPS: Planck unknown sample 1 (npix31/norder3)
+				</label>
+			</div>
+				
+			<div class="sampleCard">
+				<input type='radio' name='fits' onclick="handleChange(this);" id='7' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/unknown/Npix31.fits'>
+				<input type='hidden' name='postcard7' id='postcard7' value=''/>
+				Min: <input type='text' name='min7' value=null id='min7'/>
+				Max: <input type='text' name='max7' value=null id='max7'/>
+				<label for='7'>
+					FITS from HiPS: Planck unknown sample 2 (npix31/norder3)
+				</label>
+			</div>
+				
+			<div class="sampleCard">
+				<input type='radio' name='fits' onclick="handleChange(this);" id='8' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/unknown/Npix237.fits'>
+				<input type='hidden' name='postcard8' id='postcard8' value=''/>
+				Min: <input type='text' name='min8' value=null id='min8'/>
+				Max: <input type='text' name='max8' value=null id='max8'/>
+				<label for='8'>
+					Planck unknown sample 3 (npix237/norder3) taken from:
+					<br>I don't know! Somewhere from ESASky eheh
+				</label>
+			</div>
+			
+			
+			<div class="sampleCard">
+				<input type='radio' name='fits' onclick="handleChange(this);" id='9' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/unknown/Npix259.fits'>
+				<input type='hidden' name='postcard9' id='postcard9' value=''/>
+				Min: <input type='text' name='min9' value=null id='min9'/>
+				Max: <input type='text' name='max9' value=null id='max9'/>
+				<label for='9'>
+					FITS from HiPS: Planck unknown sample 4 (npix259/norder3)
+				</label>
+			</div>
+
+			<div class="sampleCard">
+				<input type='radio' name='fits' onclick="handleChange(this);" id='10' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/unknown/Npix356.fits'>
+				<input type='hidden' name='postcard10' id='postcard10' value=''/>
+				Min: <input type='text' name='min10' value=null id='min10'/>
+				Max: <input type='text' name='max10' value=null id='max10'/>
+				<label for='10'>
+					FITS from HiPS: Planck unknown sample 5 (npix356/norder3)
+				</label>
+			</div>
+			
+			
+			<div class="sampleCard">
+				<input type='radio' name='fits' onclick="handleChange(this);" id='11' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/unknown/Npix416.fits'>
+				<input type='hidden' name='postcard11' id='postcard11' value=''/>
+				Min: <input type='text' name='min11' value=null id='min11'/>
+				Max: <input type='text' name='max11' value=null id='max11'/>
+				<label for='11'>
+					Planck unknown sample 5 (npix416/norder3) taken from:
+					<br>I don't know! Somewhere from ESASky eheh
+				</label>
+			</div>
+			
+			<div class="sampleCard">
+				<input type='radio' name='fits' onclick="handleChange(this);" id='12' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/FITS/hst/x0c70103t_c1f.fits'>
+				<input type='hidden' name='postcard12' id='postcard12' value='http://hst.esac.esa.int/ehst-sl-server/servlet/data-action?RETRIEVAL_TYPE=POSTCARD&OBSERVATION_ID=x0c70103t'/>
+				Min: <input type='text' name='min12' value=null id='min12'/>
+				Max: <input type='text' name='max12' value=null id='max12'/>
+				<label for='12'>
+					HST sample1 (normal FITS, no HiPS) taken from the eHST archive. Observation x0c70103t_c1f
+				</label>
+				http://hst.esac.esa.int/ehst-sl-server/servlet/data-action?RETRIEVAL_TYPE=POSTCARD&OBSERVATION_ID=x0c70103t
+			</div>
 			<br>
-			<br>Image preview from png/jpeg:
-			<br><img src="http://skies.esac.esa.int/pla/LFI_SkyMap_070_1024_R3_00_full_smooth_HiPS/Norder3/Dir0/Npix293.png"/>
-		</label>
-		http://skies.esac.esa.int/pla/LFI_SkyMap_070_1024_R3_00_full_smooth_HiPS/Norder3/Dir0/Npix293.png
-		<br>http://skies.esac.esa.int/pla/LFI_SkyMap_070_1024_R3_00_full_smooth_HiPS/Norder3/Dir0/Npix293.fits
-		<br>
-		<br>
-		
-		<input type='radio' name='fits' onclick="handleChange(this);" id='2' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/lfi-070-smooth/Npix304.fits'>
-		<label for='2'>
-			Planck lfi-070-smooth sample 2 FITS taken from:
-			<br>http://skies.esac.esa.int/pla/LFI_SkyMap_070_1024_R3_00_full_smooth_HiPS/Norder3/Dir0/Npix304.fits
-			<br>
-			<br>Image preview from png/jpeg:
-			<br><img src="http://skies.esac.esa.int/pla/LFI_SkyMap_070_1024_R3_00_full_smooth_HiPS/Norder3/Dir0/Npix304.png"/>
-		</label>
-		http://skies.esac.esa.int/pla/LFI_SkyMap_070_1024_R3_00_full_smooth_HiPS/Norder3/Dir0/Npix304.png
-		<br>http://skies.esac.esa.int/pla/LFI_SkyMap_070_1024_R3_00_full_smooth_HiPS/Norder3/Dir0/Npix304.fits
-		<br>
-		<br>
-		
-		<input type='radio' name='fits' onclick="handleChange(this);" id='3' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/herschel/spire250norm/Npix278.fits'>
-		<label for='3'>
-			Herschel hips250_pnorm_allsky sample 1 FITS taken from:
-			<br>http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix278.fits
-			<br>
-			<br>Image preview from png/jpeg (http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix278.png):
-			<br><img src="http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix278.png"/>
-		</label>
-		http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix278.png
-		<br>http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix278.fits
-		<br>
-		<br>
-		
-		<input type='radio' name='fits' onclick="handleChange(this);" id='4' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/herschel/spire250norm/Npix281.fits'>
-		<label for='4'>
-			Herschel hips250_pnorm_allsky sample 2 taken from:
-			<br>http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix281.fits
-			<br>
-			<br>Image preview from png/jpeg (http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix281.png):
-			<br><img src="http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix281.png"/>
-		</label>
-		http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix281.png
-		<br>http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix281.fits
-		<br>
-		<br>
-		
-		<input type='radio' name='fits' onclick="handleChange(this);" id='5' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/herschel/spire250norm/Npix282.fits'>
-		<label for='5'>
-			Herschel hips250_pnorm_allsky sample 3 taken from:
-			<br>http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix282.fits
-			<br>
-			<br>Image preview from png/jpeg (http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix282.png):
-			<br><img src="http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix282.png"/>
-		</label>
-		http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix282.png
-		<br>http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix282.fits
-		<br>
-		<br>
-		
-		<input type='radio' name='fits' onclick="handleChange(this);" id='6' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/unknown/Npix19.fits'>
-		<label for='6'>
-			Planck unknown sample 1 (npix31/norder3) taken from:
-			<br>I don't know! Somewhere from ESASky eheh
-		</label>
-		<br>
-		<input type='radio' name='fits' onclick="handleChange(this);" id='7' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/unknown/Npix31.fits'>
-		<label for='7'>
-			Planck unknown sample 2 (npix31/norder3) taken from:
-			<br>I don't know! Somewhere from ESASky eheh
-		</label>
-		<br>
-		<input type='radio' name='fits' onclick="handleChange(this);" id='8' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/unknown/Npix237.fits'>
-		<label for='8'>
-			Planck unknown sample 3 (npix237/norder3) taken from:
-			<br>I don't know! Somewhere from ESASky eheh
-		</label>
-		<br>
-		<input type='radio' name='fits' onclick="handleChange(this);" id='9' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/unknown/Npix259.fits'>
-		<label for='9'>
-			Planck unknown sample 4 (npix259/norder3) taken from:
-			<br>I don't know! Somewhere from ESASky eheh
-		</label>
-		<br>
-		<input type='radio' name='fits' onclick="handleChange(this);" id='10' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/unknown/Npix356.fits'>
-		<label for='10'>
-			Planck unknown sample 5 (npix356/norder3) taken from:
-			<br>I don't know! Somewhere from ESASky eheh
-		</label>
-		<br>
-		<input type='radio' name='fits' onclick="handleChange(this);" id='11' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/planck/unknown/Npix416.fits'>
-		<label for='11'>
-			Planck unknown sample 5 (npix416/norder3) taken from:
-			<br>I don't know! Somewhere from ESASky eheh
-		</label>
-		<br>
-		<input type='radio' name='fits' onclick="handleChange(this);" id='12' value='http://localhost/~lavorofab/javascript/FITSOnTheWeb/input/FITS/hst/x0c70103t_c1f.fits'>
-		<label for='12'>
-			HST sample1 (normal FITS, no HiPS) taken from the eHST archive. Observation x0c70103t_c1f
-			<br>
-			<img src="http://hst.esac.esa.int/ehst-sl-server/servlet/data-action?RETRIEVAL_TYPE=POSTCARD&OBSERVATION_ID=x0c70103t" />
-		</label>
-		http://hst.esac.esa.int/ehst-sl-server/servlet/data-action?RETRIEVAL_TYPE=POSTCARD&OBSERVATION_ID=x0c70103t
-		<br>
-	
+		</div>
+<!-- 		<label for='samples'> -->
+<!-- 			Some samples: -->
+<!-- 		</label> -->
 	
 
 	</div>
