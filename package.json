@@ -1,0 +1,22 @@
+{
+  "name": "fitsontheweb",
+  "sideEffects": false,
+  "version": "1.0.0",
+  "main": "fitsontheweb",
+  "private": true,
+  "scripts": {
+    "build": "webpack --config webpack.dev.js",
+    "prod": "webpack --config webpack.prod.js"
+  },
+  "module": "src/FITSOnTheWeb.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "clean-webpack-plugin": "^3.0.0",
+    "webpack": "^5.4.0",
+    "webpack-cli": "^3.3.12"
+  },
+  "dependencies": {},
+  "description": ""
+}

@@ -212,3 +212,4 @@ ColorMaps['cubehelix'] = {
     ]	
 };
 
+export default ColorMaps;

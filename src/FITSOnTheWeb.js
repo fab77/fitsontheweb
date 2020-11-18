@@ -1,5 +1,5 @@
 "use strict";
-
+import ColorMaps from './ColorMaps';
 /**
  * Summary. (bla bla bla)
  *
@@ -25,31 +25,31 @@
  * 
  */
 
-class FabFitsReader {
+class FITSOnTheWeb {
 
+//	firstRun = true;
+//	BITPIX; // mandatory
+//	BLANK;
+//	BZERO = 0;	// physical_value = BZERO + BSCALE * array_value;
+//	BSCALE = 1;	// physical_value = BZERO + BSCALE * array_value;
+//	NAXIS1;
+//	NAXIS2;
+//	NAXIS = 2;
+//	SIMPLE = "T"; // for FITS following the STSCI standard. F if different standard
+//	
+//	colorMap;
+//	PVMIN = "NaN";
+//	PVMAX = "NaN";
+//	PVMIN_orig = "NaN";
+//	PVMAX_orig = "NaN";
+//	BLANK_pv;
+//	physicalValues = [];
+//	img;
+//	tfPhysicalValues;
+//	tFunction;
+//	data;
+//	headerOffset;
 		
-		BITPIX; // mandatory
-		BLANK;
-		BZERO = 0;	// physical_value = BZERO + BSCALE * array_value;
-		BSCALE = 1;	// physical_value = BZERO + BSCALE * array_value;
-		NAXIS1;
-		NAXIS2;
-		NAXIS = 2;
-		SIMPLE = "T"; // for FITS following the STSCI standard. F if different standard
-		
-//		colorMap = [];
-		colorMap;
-		PVMIN = "NaN";
-		PVMAX = "NaN";
-		PVMIN_orig = "NaN";
-		PVMAX_orig = "NaN";
-		BLANK_pv;
-		physicalValues = [];
-		img;
-		tfPhysicalValues;
-		tFunction;
-		data;
-		headerOffset;
 		
 	/**
 	 * @param url: FITS HTTP URL
@@ -59,6 +59,33 @@ class FabFitsReader {
 	 * @param callback: function to be called once the FITS has been converted in Image
 	 */
 	constructor (url, in_colorMap, in_tFunction, pvMin, pvMax, callback){
+		
+		this._img = undefined;
+		this.firstRun = true;
+		
+		this.BITPIX = undefined; // mandatory
+		this.BLANK = undefined;
+		this.BZERO = 0;	// physical_value = BZERO + BSCALE * array_value;
+		this.BSCALE = 1;	// physical_value = BZERO + BSCALE * array_value;
+		this.NAXIS1 = 0;
+		this.NAXIS2 = 1;
+		this.NAXIS = 2;
+		this.SIMPLE = "T"; // for FITS following the STSCI standard. F if different standard
+		
+		this.PVMIN = "NaN";
+		this.PVMAX = "NaN";
+		this.PVMIN_orig = "NaN";
+		this.PVMAX_orig = "NaN";
+		this.BLANK_pv = undefined;
+		this.physicalValues = [];
+		
+		this.tfPhysicalValues = undefined;
+		this.data = undefined;
+		this.headerOffset = undefined;
+		
+		
+		
+		
 		var self = this;
 		this.colorMap = in_colorMap;
 		this.tFunction = in_tFunction;
@@ -77,11 +104,11 @@ class FabFitsReader {
 	    xhr.overrideMimeType("text/plain; charset=x-user-defined");
 	    
 	    xhr.onload = function() {
-	    	var img = self.processFits(xhr.responseText);
-	    	img.onclick = function(){
+	    	var imgres = self.processFits(xhr.responseText);
+	    	imgres.onclick = function(){
 	    		console.log("Clicked on img "+url);
 	    	}
-	    	callback(img);
+	    	callback(imgres);
 	    }
 
 		xhr.send(null);
@@ -176,7 +203,6 @@ class FabFitsReader {
 		return offset;
 	}
 	
-	firstRun = true;
 	
 	readPayload (in_min, in_max){		
 		let length = this.data.length;
@@ -306,11 +332,11 @@ class FabFitsReader {
 		
 		
 		this.tfPhysicalValues = this.physicalValues;
-		this.img = this.applyScaleFunction(this.tFunction);
+		this._img = this.applyScaleFunction(this.tFunction);
 		
 //		this.img = this.applyColorMap(this.colorMap);
     
-        return this.img;
+        return this._img;
 
 	}
 	
@@ -334,7 +360,7 @@ class FabFitsReader {
 	}
 	
 	get img(){
-		return this.img;
+		return this._img;
 	}
 	
 	getPhysicalNumber(idx){
@@ -365,8 +391,8 @@ class FabFitsReader {
 		}else if (tFunc == 'linear'){
 			this.tfPhysicalValues = this.physicalValues;
 		}
-		this.img = this.applyColorMap(this.colorMap, inverse);
-		return this.img;
+		this._img = this.applyColorMap(this.colorMap, inverse);
+		return this._img;
 	}
 	
 	
@@ -401,7 +427,7 @@ class FabFitsReader {
     	ctx.putImageData(imgData, 0, 0);
     	var img = new Image();
         img.src = c.toDataURL();
-        this.img = img;
+        this._img = img;
         return img;
 	}
 	
@@ -542,7 +568,7 @@ class FabFitsReader {
 	}
 }
 	
-	
+export default FITSOnTheWeb; 
 	
 	
 	
