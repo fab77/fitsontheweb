@@ -61,6 +61,7 @@ class FITSOnTheWeb {
 	constructor (url, in_colorMap, in_tFunction, pvMin, pvMax, callback){
 		
 		this._img = undefined;
+		this.url = url;
 		this.firstRun = true;
 		
 		this.BITPIX = undefined; // mandatory
@@ -99,19 +100,26 @@ class FITSOnTheWeb {
 			this.PVMAX_orig = pvMax;
 		}
 		
-		var xhr = new XMLHttpRequest();
-		xhr.open("GET", url, true);
-	    xhr.overrideMimeType("text/plain; charset=x-user-defined");
+		this.xhr = new XMLHttpRequest();
+
+		this.xhr.overrideMimeType("text/plain; charset=x-user-defined");
 	    
-	    xhr.onload = function() {
-	    	var imgres = self.processFits(xhr.responseText);
+	    this.xhr.onload = function() {
+	    	var imgres = self.processFits(self.xhr.responseText);
 	    	imgres.onclick = function(){
 	    		console.log("Clicked on img "+url);
 	    	}
 	    	callback(imgres);
 	    }
+	}
 
-		xhr.send(null);
+	stop(){
+		this.xhr.abort();
+	}
+
+	start(){
+		this.xhr.open("GET", this.url, true);
+		this.xhr.send(null);
 	}
 	
 	processFits (data) {
@@ -197,7 +205,7 @@ class FITSOnTheWeb {
 		
 		this.physicalValues = new Array(this.width * this.height);
 		
-		console.log("width "+this.width+", height "+this.height);
+		// console.log("width "+this.width+", height "+this.height);
 		// Remove any space padding
 		while(offset < length && this.getStringAt(fitsFile,offset,1) == " ") offset++;
 		return offset;
@@ -208,14 +216,14 @@ class FITSOnTheWeb {
 		let length = this.data.length;
     	var i = this.headerOffset;
     	var p = 0;
-		var x;
+		// var x;
 //		var min = 'NaN';
 //		var max = 'NaN';
-		var c=document.createElement('canvas');
-    	c.width = this.width;
-        c.height = this.height;
-    	var ctx=c.getContext("2d");
-    	var imgData=ctx.createImageData(this.width, this.height);
+		// var c=document.createElement('canvas');
+    	// c.width = this.width;
+        // c.height = this.height;
+    	// var ctx=c.getContext("2d");
+    	// var imgData=ctx.createImageData(this.width, this.height);
     	var val;
     	// NON FUNZIONAAAAA
 //    	min = max = val = this.getLongAt(fitsFile, i, true); //IEEE float32 is always big-endian
@@ -268,8 +276,8 @@ class FITSOnTheWeb {
     	}
     	
     	
-    	console.log("this.PVMIN "+this.PVMIN);
-		console.log("this.PVMAX "+this.PVMAX);
+    	// console.log("this.PVMIN "+this.PVMIN);
+		// console.log("this.PVMAX "+this.PVMAX);
     	
     	
 		while (i < length){
@@ -297,12 +305,12 @@ class FITSOnTheWeb {
 			// this could be checked against the array blanck value val !== this.BLANK
 			if( min2bChecked && p_val < this.PVMIN ) {
 				this.PVMIN = p_val;
-				console.log(this.PVMIN);
+				// console.log(this.PVMIN);
 			}
 
 			if(max2bChecked && p_val > this.PVMAX) {
 				this.PVMAX = p_val;
-				console.log(this.PVMAX);
+				// console.log(this.PVMAX);
 			}
 
 			
@@ -317,8 +325,8 @@ class FITSOnTheWeb {
 
 			i += Math.abs(this.BITPIX/8);
 		}
-		console.log("this.PVMIN "+this.PVMIN);
-		console.log("this.PVMAX "+this.PVMAX);
+		// console.log("this.PVMIN "+this.PVMIN);
+		// console.log("this.PVMAX "+this.PVMAX);
 		
 		if (this.firstRun){
 			this.firstRun = false;		
