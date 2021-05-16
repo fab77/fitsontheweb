@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		
+		<meta charset="UTF-8">
+		<title><%= htmlWebpackPlugin.options.title %></title>
+		<meta http-equiv="content-type"
+			content="text/html; charset=windows-1252">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	    
+<!-- 	    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css"> -->
+<!-- 	    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"  media="screen"> -->
+	    
+<!-- 		<script src="//code.jquery.com/jquery-1.11.1.min.js"></script> -->
+<!-- 		<script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script> -->
+<!-- 		<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script> -->
+		
+		<script
+	src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+	integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs="
+	crossorigin="anonymous"></script>
+		<script>
+		
+// 			var reader;
+		
+// 			function handleChange(myRadio){
+
+// 				let postcard = document.getElementById("postcard"+myRadio.id).value;
+				
+// 				let min = parseFloat(document.getElementById("min"+myRadio.id).value);
+// 				let max = parseFloat(document.getElementById("max"+myRadio.id).value);
+				
+				
+// 				let cme = document.getElementById("colorMaps");
+// 				let colorMap = cme.options[cme.selectedIndex].value;
+				
+// 				let tfe = document.getElementById("scaleFunction");
+// 				let tFunction = tfe.options[tfe.selectedIndex].value;
+				
+// 				document.getElementById('imgDiv').innerHTML = "nothing!";
+	
+	
+// 				reader = new FITSOnTheWeb(myRadio.value, colorMap, tFunction, min, max, function (img) {
+// 					document.getElementById('imgDiv').innerHTML = "<img src="+img.src+">";
+					
+// 					var slidermin = document.getElementById ("range-min");
+// 					slidermin.setAttribute ("min", reader.min);
+// 					slidermin.setAttribute ("max", reader.max);
+// 					slidermin.setAttribute ("value", reader.min);
+					
+					
+// 					var slidermax = document.getElementById ("range-max");
+// 					slidermax.setAttribute ("min", reader.min);
+// 					slidermax.setAttribute ("max", reader.max);
+// 					slidermax.setAttribute ("value", reader.max);
+					
+// 				});
+// 				document.getElementById('postcardDiv').innerHTML = "<img src="+postcard+">";
+				
+			
+				
+// 			}
+		
+
+// 			function loadFromURL(){
+		
+// 				let cme = document.getElementById("colorMaps");
+// 				let colorMap = cme.options[cme.selectedIndex].value;
+				
+// 				let tfe = document.getElementById("scaleFunction");
+// 				let tFunction = tfe.options[tfe.selectedIndex].value;
+				
+				
+// 				let url = document.getElementById('url').value;
+				
+// 				document.getElementById('imgDiv').innerHTML = "nothing!";
+// 				reader = new FabFitsReader(url, colorMap, tFunction, null, null, function (img) {
+// 					document.getElementById('imgDiv').innerHTML = "<img src="+img.src+">";
+// 				});
+			
+// 			}
+			
+// 			var isDragging = true;
+
+// 			var r1 = document.getElementById("range-min");
+// 			var r2 = document.getElementById("range-max");
+			
+// 			document.addEventListener('mousedown', e => {
+// 				isDragging = true;
+// 			});
+			
+			
+// 			document.addEventListener('mouseup', e => {
+// 				isDragging = false;
+// 			});
+			
+			
+// 			let r1_val;
+// 			let r2_val;
+			
+
+		</script>
+		
+		<script>
+			var DEBUG = false;
+			var fabViewer;
+		
+			function run() {
+				if (DEBUG) {
+					console.log("[index::run]");
+				}
+			}
+		</script>
+	</head>
+<body onload="run();">
+
+    
+	<div id="container">
+		
+
+	</div>
+</body>
+</html>
