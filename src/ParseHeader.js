@@ -89,7 +89,6 @@ class ParseHeader {
 				this._header.setHeaderItem(key, val);
 			}
 			if(str.indexOf('END') == 0) {
-//				console.log("Found END with offset "+offset);
 				break;
 			}
 		}
@@ -138,9 +137,6 @@ class ParseHeader {
 			this.PVMAX_orig = this._header.getValue("DATAMAX");
 		}
 		
-//		this.physicalValues = new Array(this.width * this.height);
-		
-		// console.log("width "+this.width+", height "+this.height);
 		// Remove any space padding
 		while(this._offset < length && ParseUtils.getStringAt(this._data, this._offset, 1) == " ") {
 			this._offset++;

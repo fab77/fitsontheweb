@@ -23,25 +23,6 @@ class ParseUtils {
 		return chars.join("");
 	}
 	
-//	static getPhysicalNumber(idx, BITPIX, BZERO, BSCALE, data){
-//		let val;
-//    	if (BITPIX == 16){ // 16-bit 2's complement binary integer
-//    		
-//    		val = ParseUtils.parse16bit2sComplement(data, idx, true); //IEEE 754 half precision (float16)
-//    		
-//		}else if (this.BITPIX == -32){	// 32 bit single precision 
-//			
-//			val = ParseUtils.parse32bitSinglePrecisionFloatingPoint (data, idx, true); //IEEE 754 float32 is always big-endian	
-//			if (val != 0){
-//				val = (1.0+((val&0x007fffff)/0x0800000)) * Math.pow(2,((val&0x7f800000)>>23) - 127); // long to float conversion
-//			}
-//			
-//		}
-//    	// computing physical value
-//    	let p_val = BZERO + BSCALE * val;
-//    	return p_val;
-//	}
-	
 	static parse32bitSinglePrecisionFloatingPoint (data, offset) {
 		var byte1 = ParseUtils.getByteAt(data, offset);
 		let byte2 = ParseUtils.getByteAt(data, offset + 1);

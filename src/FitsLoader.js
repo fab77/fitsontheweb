@@ -34,10 +34,9 @@ class FitsLoader {
 		let xhr = new XMLHttpRequest();
 
 //		xhr.overrideMimeType("text/plain; charset=x-user-defined");
- xhr.overrideMimeType("text/plain; charset=iso-8859-1");
-// xhr.overrideMimeType("text/plain; charset=UTF-8");
+		xhr.overrideMimeType("text/plain; charset=iso-8859-1");
+// 		xhr.overrideMimeType("text/plain; charset=UTF-8");
 		
-	    
 	    xhr.onload = function() {
 	    	self._caller.onFitsLoaded(xhr.responseText);
 	    }
@@ -61,12 +60,10 @@ class FitsLoader {
             var offset = (currentChunk-1) * chunkSize;
             var currentFilePart = file.slice(offset, (offset+chunkSize));
 
-// console.log('Current chunk number is ', currentChunk);
-// console.log('Current chunk data', currentFilePart);
-
             let reader = new FileReader();
- reader.readAsText(currentFilePart, "iso-8859-1");
-//            reader.readAsText(currentFilePart, "x-user-defined");
+            reader.readAsText(currentFilePart, "iso-8859-1");
+//          reader.readAsText(currentFilePart, "x-user-defined");
+//          reader.readAsText(currentFilePart, "UTF-8");
             reader.onload = function (e) {
             	self._caller.onFitsLoaded(reader.result);
             }

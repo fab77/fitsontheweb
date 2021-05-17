@@ -49,11 +49,6 @@ class ParsePayload{
 	_physicalValues;
 	_tfPhysicalValues;
 	
-// _BZERO;
-// _BSCALE;
-// _BLANK;
-// _BPIX;
-	
 	_inverse;
 	_img;
 	
@@ -83,18 +78,12 @@ class ParsePayload{
 		this._data = fitsFile;
 		
 		this.firstRun = true;
-// this._BZERO = this._header.getValue("BZERO");
-// this._BSCALE = this._header.getValue("BSCALE");
-// this._BLANK = this._header.getValue("BLANK");
-// this._BPIX = this._header.getValue("BPIX");
 		
 		this._PVMIN = "NaN";
 		this._PVMAX = "NaN";
 		this._PVMIN_orig = "NaN";
 		this._PVMAX_orig = "NaN";
 		this._BLANK_pv = this._header.getValue("BZERO") + this._header.getValue("BSCALE") * this._header.getValue("BLANK") || undefined;
-//		this._BLANK_pv = this.getPhysicalValue(this._header.getValue("BLANK"));
-		
 		
 		this._physicalValues = new Array(this._header.getValue("NAXIS1") * this._header.getValue("NAXIS2"));
 		
@@ -119,12 +108,6 @@ class ParsePayload{
 		this.parseData(in_min, in_max);
 		
 		this.applyScaleFunction(this._tFunction);
-
-//		let str;
-//		for (let j=0; j < 512; j++){
-//			str += j+") "+this.values[j]+" | ";
-//		}
-//		console.log(str);
 		
 //		this.inspectParsedData ();
 		
@@ -173,36 +156,22 @@ class ParsePayload{
     	}else {
     		this._PVMAX = this._PVMAX_orig;
     	}
-    	
-    	
-    	// console.log("this.PVMIN "+this.PVMIN);
-		// console.log("this.PVMAX "+this.PVMAX);
-    	console.log("this._BLANK_pv "+this._BLANK_pv);
-    	console.log("this._BLANK "+this._header.getValue("BLANK"));
-    	
-    	
+
 		while (i < length){
 			
 			let p_val = this.getPhysicalNumber(i);			
 			
-			// this could be checked against the array blanck value val !==
-			// this.BLANK
 			if( min2bChecked && p_val < this._PVMIN && p_val > Number.MIN_VALUE) {
 				this._PVMIN = p_val;
-				// console.log(this.PVMIN);
 			}
 
 			if(max2bChecked && p_val > this._PVMAX && p_val < Number.MAX_VALUE) {
 				this._PVMAX = p_val;
-				// console.log(this.PVMAX);
 			}
 
 			
 			if( p_val > Number.MIN_VALUE && p_val >= this._PVMIN && p_val <= this._PVMAX) {
-//			if( p_val !== this._BLANK_pv && p_val >= this._PVMIN && p_val <= this._PVMAX) {
-//			if( p_val !== this._header.getValue("BLANK") && p_val >= this._PVMIN && p_val <= this._PVMAX ) {	
 				this._physicalValues[p++] = p_val;
-// i += Math.abs(this.BITPIX/8);
 			}
 			else{
 				this._physicalValues[p++] = "NaN";	
@@ -210,8 +179,6 @@ class ParsePayload{
 
 			i += Math.abs(this._header.getValue("BITPIX")/8);
 		}
-		// console.log("this.PVMIN "+this.PVMIN);
-		// console.log("this.PVMAX "+this.PVMAX);
 		
 		if (this.firstRun){
 			this.firstRun = false;		
@@ -222,9 +189,6 @@ class ParsePayload{
 				this._PVMAX_orig = this._PVMAX;
 			}
 		}
-		
-		
-// this._tfPhysicalValues = this._physicalValues;
 		
 	}
 	
@@ -387,8 +351,8 @@ class ParsePayload{
         let pos;
         let colors;
     	
-        console.log("Physical length: " + this._tfPhysicalValues.length);
-        console.log("Image length: " + imgData.data.length);
+//        console.log("Physical length: " + this._tfPhysicalValues.length);
+//        console.log("Image length: " + imgData.data.length);
 		for (row=0; row < this._header.getValue("NAXIS1"); row++){
     		for (col=0; col < this._header.getValue("NAXIS2"); col++){
 
@@ -412,7 +376,6 @@ class ParsePayload{
     	let img = new Image();
         img.src = c.toDataURL();
         this._img = img;
-// return img;
 	}
 	
 	
@@ -429,7 +392,7 @@ class ParsePayload{
 		}
 		
 		if (v <= this.BLANK_pv ){
-// console.log(v);
+
 			return {
 				r:0,
 				g:0,
@@ -488,21 +451,8 @@ class ParsePayload{
 		return this._img;
 	}
 	
-// set inverse (bool){
-// this._inverse = bool;
-// }
 	getPhysicalPixelValue(i, j){
-// let idx = this._headerOffset + (i * j);
-//		let idx = ((j-1) * this._header.getValue("NAXIS2") ) + i;
-//		let idx = ((i-1) * this._header.getValue("NAXIS1") ) + j;
-//		let size = this._tfPhysicalValues.length;
-		
-//		let idx =   ( (i-1) * this._header.getValue("NAXIS1") ) + (j-1) ;
-		let idx =   ( (this._header.getValue("NAXIS2")-j-1) * this._header.getValue("NAXIS1") ) + (i-1) ;
-		
-//		let idx = ((512-i)*512+j)
-//		let idx = i*512+ (512 -j)
-// let idx = (j * this._header.getValue("NAXIS1") ) + i;
+		let idx =   ( (this._header.getValue("NAXIS2")-j-1) * this._header.getValue("NAXIS1") ) + (i-1) ;		
 		return this._tfPhysicalValues[idx];
 	}
 }
