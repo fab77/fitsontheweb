@@ -387,19 +387,24 @@ class ParsePayload{
         let pos;
         let colors;
     	
+        console.log("Physical length: " + this._tfPhysicalValues.length);
+        console.log("Image length: " + imgData.data.length);
 		for (row=0; row < this._header.getValue("NAXIS1"); row++){
     		for (col=0; col < this._header.getValue("NAXIS2"); col++){
 
     			/** to invert x and y replace the pos computation with the following */
     			/** pos = ((c.width - row) * (c.height) + col ) * 4; */
-    			pos = ( col * c.width + row ) * 4;
-// colors = this.colorImage2(this.physicalValues[i],this.PVMIN, this.PVMAX);
+//    			pos = ( col * c.width + row ) * 4;
+    			pos = ( (this._header.getValue("NAXIS1") - row) * c.width + col ) * 4;
+
+
     			colors = this.colorImage(this._tfPhysicalValues[i], this._inverse);
 
     			imgData.data[pos] = colors.r;
     			imgData.data[pos+1] = colors.g;
     			imgData.data[pos+2] = colors.b;
     			imgData.data[pos+3] = 0xff; // alpha
+    			
     			i++;
     		}
     	}
@@ -492,7 +497,8 @@ class ParsePayload{
 //		let idx = ((i-1) * this._header.getValue("NAXIS1") ) + j;
 //		let size = this._tfPhysicalValues.length;
 		
-		let idx =   ( (i-1) * this._header.getValue("NAXIS1") ) + (j-1) ;
+//		let idx =   ( (i-1) * this._header.getValue("NAXIS1") ) + (j-1) ;
+		let idx =   ( (this._header.getValue("NAXIS2")-j-1) * this._header.getValue("NAXIS1") ) + (i-1) ;
 		
 //		let idx = ((512-i)*512+j)
 //		let idx = i*512+ (512 -j)
