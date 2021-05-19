@@ -19,24 +19,34 @@ class View{
 		this._selectedScaleFunction = "linear";
 		this._selectedColorMap = "grayscale";
 		
-		
 		this._container.append(this.initErrorBox());
-		this._container.append("<br>");
+		this._container.append(this.initTitle());
+		this._container.append("<hr>");
 		this._container.append(this.initFileBrowser ());
-		this._container.append("<br>");
+		this._container.append("<hr>");
 		this._container.append(this.initFITSHeader ());
-		this._container.append("<br>");
+		this._container.append("<hr>");
 		this._container.append(this.initColorMaps());
-		this._container.append("<br>");
+		this._container.append("<hr>");
 		this._container.append(this.initScaleFunction());
-		this._container.append("<br>");
+		this._container.append("<hr>");
 		this._container.append(this.initPixelsScale());
-		this._container.append("<br>");
+		this._container.append("<hr>");
+		
+		this._container.append(this.initPixelValue());
+		this._container.append("<hr>");
+		
 		this._container.append(this.initResultBoxes());
-		this._container.append("<br>");
 		
 		this.clearErrorBox();
 		
+		
+		
+	}
+	
+	initTitle () {
+		let html = "<div id='title'><h1>FITSOnTheWeb</h1></div>";
+		return html;
 	}
 	
 	getFITSImgFromDOM () {
@@ -94,11 +104,12 @@ class View{
 	 */
 	setFitsPreview (img) {
 
-		let temp = document.getElementById('fitsDiv');
-		img.id = 'fitsImg';
-		temp.innerHTML = img.outerHTML;
+//		let temp = document.getElementById('fitsDiv');
+//		img.id = 'fitsImg';
+//		temp.innerHTML = img.outerHTML;
 
-		
+		let temp = document.getElementById('fitsImg');
+		temp.src = img.src;		
 	}
 
 
@@ -329,9 +340,9 @@ class View{
 	
 	initPixelsScale(){
 		let html = 
-			"<label for='testest'>Pixels scale:<br>"+
-			"</label>"+
-			"<div id='testest'>"+
+			"<div>" +
+			"	<label for='minmax'>Pixels scale:</label>"+
+			"	<div id='minmax'>"+
 			"		<label for='range-min'>Min:</label>"+
 			"		<input type='range' name='range-min' id='range-min' step='0.0001' />" +
 			"		<input type='text' id='min-val'/>" +
@@ -339,8 +350,24 @@ class View{
 			"		<label for='range-max'>Max:</label>"+
 			"		<input type='range' name='range-max' id='range-max' step='0.0001'/>" +
 			"		<input type='text' id='max-val'/>" +
-			"		<input type='button' name='minmax' id='minmax' value='set'/>"+
+			"		<input type='button' name='minmax' id='minmax' value='set'/>" +
+			"	</div>"+
 			"</div>";
+		return html;
+	}
+	
+	setPhysicalValue (pVal){
+		document.getElementById('pixelValue').innerHTML = pVal;
+	}
+	
+	initPixelValue() {
+		
+		let html = "<div id='pixValueContainer'>" +
+				"		<labe for='pixelValue'>" +
+				"			Pixel physical value:" +
+				"		</label>" +
+				"		<div id='pixelValue'><div>" +
+				"	</div>";
 		return html;
 	}
 	
@@ -351,7 +378,7 @@ class View{
 					"		<label for='fitsDiv'>"+
 					"			computed image from FITS:"+
 					"		</label>"+
-					"		<div id='fitsDiv'>"+
+					"		<div id='fitsDiv'><img id='fitsImg' />"+
 					"		</div>"+
 					"	</div>"+
 						

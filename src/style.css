@@ -1,8 +1,19 @@
 @charset "UTF-8";
 
+#title {
+	text-align: center;
+}
+
+hr {
+    width: 78%;
+}
+
 #container{
-	width: 100%;
 	margin-left: 16%;
+	background-color: darkgray;
+	margin-right: 16%;
+	border-radius: 3px;
+	padding: 3px;
 }
 
 .sampleCard{

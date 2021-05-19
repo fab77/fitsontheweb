@@ -158,8 +158,8 @@ class FITSOnTheWeb {
 		return str;
 	}
 	
-	getPhysicalPixelValue (i, j) {
-		return this._payload.getPhysicalPixelValue (i, j);
+	getPhysicalPixelValueFromScreenMouse (i, j) {
+		return this._payload.getPhysicalPixelValueFromScreenMouse (i, j);
 	}
 
 }

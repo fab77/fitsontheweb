@@ -28,47 +28,11 @@ class Presenter {
 					function(img, min, max) { 
 						self._view.setFitsPreview(img);	
 						self._view.setMinMax(min, max);
-						
-						
-						$("img").mousemove(function (e) {
-
-							var x = e.pageX - this.offsetLeft;
-					        var y = e.pageY - this.offsetTop;
-					        
-					        let naxis1 = self._fOTW.header.getValue("NAXIS1");
-					        let naxis2 = self._fOTW.header.getValue("NAXIS2");
-					        let width = $(this).width();
-					        let height = $(this).height();
-					        let i = x;
-					        let j = naxis2 - y;
-					        
-					        let p_value = self._fOTW.getPhysicalPixelValue(x, y);
-					        console.log("i: "+i+" j: "+j+" p_value: "+p_value);
-					    });
 					}, 
 					self._view.selectedColorMap, 
 					self._view.selectedScaleFunction, 
 					null, null);
-			
-
-//			fitsImg
-//			document.getElementById('fitsDiv').addEventListener('click', function (e) {
-//				
-//				var x = e.pageX - this.offsetLeft;
-//		        var y = e.pageY - this.offsetTop;
-//		        alert("X Coordinate: " + x + " Y Coordinate: " + y);
-//		        
-//		        let naxis1 = self._fOTW.header.getValue("NAXIS1");
-//		        let naxis2 = self._fOTW.header.getValue("NAXIS2");
-////		        self._fOTW.getPhysicalValue()
-//		        
-//		        
-//		        
-//		        
-//			  });
-			
-			
-			
+			self.addEventListener (self);
 
         });
 		
@@ -103,6 +67,8 @@ class Presenter {
 					self._view.selectedScaleFunction, 
 					null, null);
 			
+			self.addEventListener (self);
+			
 			self._view.getFITSImgFromDOM.on("click", function (e) {
 				var x = e.pageX - this.offsetLeft;
 		        var y = e.pageY - this.offsetTop;
@@ -131,21 +97,7 @@ class Presenter {
 				self._fOTW.changeColorMap(selectedColorMap);
 				self._view.setFitsPreview(self._fOTW.img);
 				
-				$("img").mousemove(function (e) {
-
-					var x = e.pageX - this.offsetLeft;
-			        var y = e.pageY - this.offsetTop;
-			        
-			        let naxis1 = self._fOTW.header.getValue("NAXIS1");
-			        let naxis2 = self._fOTW.header.getValue("NAXIS2");
-			        let width = $(this).width();
-			        let height = $(this).height();
-			        let i = x;
-			        let j = naxis2 - y;
-			        
-			        let p_value = self._fOTW.getPhysicalPixelValue(x, y);
-			        console.log("i: "+i+" j: "+j+" p_value: "+p_value);
-			    });
+				self.addEventListener (self);
 
 			}else{
 				self._view.showError("Please load a FITS file first.");
@@ -164,23 +116,7 @@ class Presenter {
 				self._fOTW.changeTransferFunction(selectedScaleFunction);
 				self._view.setFitsPreview(self._fOTW.img);
 				
-				$("img").mousemove(function (e) {
-
-					var x = e.pageX - this.offsetLeft;
-			        var y = e.pageY - this.offsetTop;
-			        
-			        let naxis1 = self._fOTW.header.getValue("NAXIS1");
-			        let naxis2 = self._fOTW.header.getValue("NAXIS2");
-			        let width = $(this).width();
-			        let height = $(this).height();
-			        let i = x;
-			        let j = naxis2 - y;
-			        
-			        let p_value = self._fOTW.getPhysicalPixelValue(x, y);
-			        console.log("i: "+i+" j: "+j+" p_value: "+p_value);
-			    });
-
-				
+				self.addEventListener (self);				
 				
 			}else{
 				self._view.showError("Please load a FITS file first.");
@@ -249,21 +185,7 @@ class Presenter {
 				let img = self._fOTW.reprocess(self._view.min, self._view.max);
 				self._view.setFitsPreview(img);	
 				
-				$("img").mousemove(function (e) {
-
-					var x = e.pageX - this.offsetLeft;
-			        var y = e.pageY - this.offsetTop;
-			        
-			        let naxis1 = self._fOTW.header.getValue("NAXIS1");
-			        let naxis2 = self._fOTW.header.getValue("NAXIS2");
-			        let width = $(this).width();
-			        let height = $(this).height();
-			        let i = x;
-			        let j = naxis2 - y;
-			        
-			        let p_value = self._fOTW.getPhysicalPixelValue(x, y);
-			        console.log("i: "+i+" j: "+j+" p_value: "+p_value);
-			    });
+				self.addEventListener (self);
 
 			}
 			
@@ -279,26 +201,26 @@ class Presenter {
 				self._fOTW.changeInverse(checked);
 				self._view.setFitsPreview(self._fOTW.img);
 
-				$("img").mousemove(function (e) {
-
-					var x = e.pageX - this.offsetLeft;
-			        var y = e.pageY - this.offsetTop;
-			        
-			        let naxis1 = self._fOTW.header.getValue("NAXIS1");
-			        let naxis2 = self._fOTW.header.getValue("NAXIS2");
-			        let width = $(this).width();
-			        let height = $(this).height();
-			        let i = x;
-			        let j = naxis2 - y;
-			        
-			        let p_value = self._fOTW.getPhysicalPixelValue(x, y);
-			        console.log("i: "+i+" j: "+j+" p_value: "+p_value);
-			    });
+				self.addEventListener (self);
 
 			}
 			
-		});
+		} );
 
+	}
+	
+	
+	addEventListener (presenter) {
+		
+		console.log("ping");
+		$("img").mousemove(function (e) {
+	
+			var x = e.pageX - this.offsetLeft;
+	        var y = e.pageY - this.offsetTop;
+	        
+	        let p_value = presenter._fOTW.getPhysicalPixelValueFromScreenMouse(x, y);
+	        presenter._view.setPhysicalValue(p_value);
+	    });
 	}
 	
 		

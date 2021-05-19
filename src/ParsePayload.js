@@ -451,7 +451,7 @@ class ParsePayload{
 		return this._img;
 	}
 	
-	getPhysicalPixelValue(i, j){
+	getPhysicalPixelValueFromScreenMouse(i, j){
 		let idx =   ( (this._header.getValue("NAXIS2")-j-1) * this._header.getValue("NAXIS1") ) + (i-1) ;		
 		return this._tfPhysicalValues[idx];
 	}
