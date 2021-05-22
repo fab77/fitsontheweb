@@ -74,6 +74,7 @@ hr {
     overflow: scroll;
     background: azure;
     border-radius: 4px;
+    margin-left: 1%;
 }
 
 /* The actual popup */
@@ -96,6 +97,10 @@ hr {
 
 #closeErrorMsg{
 	float: right;	
+}
+
+#fitsImg:hover {
+    cursor: crosshair;
 }
 
 /* Add animation (fade in the popup) */
