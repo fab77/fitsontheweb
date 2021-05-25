@@ -44,6 +44,8 @@
     "webpack-dev-server": "^3.11.0",
     "webpack-merge": "^5.1.4"
   },
-  "dependencies": {},
+  "dependencies": {
+    "healpixjs": "file:../healpixjs"
+  },
   "description": "Web parser for standard STSci FITS. Pixel scale, transfer function, color palette, pixels cut."
 }

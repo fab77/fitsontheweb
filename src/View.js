@@ -359,14 +359,24 @@ class View{
 	setPhysicalValue (pVal){
 		document.getElementById('pixelValue').innerHTML = pVal;
 	}
+
+	setRADecValue (ra, dec){
+		document.getElementById('raDec').innerHTML = ra+", "+dec;
+	}
+
+	setFITSxyValue (fits_x, fits_y){
+		document.getElementById('xy').innerHTML = "("+fits_x+", "+fits_y+")";
+	}
 	
 	initPixelValue() {
 		
 		let html = "<div id='pixValueContainer'>" +
-				"		<labe for='pixelValue'>" +
-				"			Pixel physical value:" +
-				"		</label>" +
-				"		<div id='pixelValue'><div>" +
+				"		<label for='pixelValue'>Pixel physical value:</label>" +
+				"		<div id='pixelValue'></div>" +
+				"		<label for='raDec'>RA, Dec:</label>" +
+				"		<div id='raDec'></div>" +
+				"		<label for='xy'>(x, y):</label>" +
+				"		<div id='xy'></div>" +
 				"	</div>";
 		return html;
 	}

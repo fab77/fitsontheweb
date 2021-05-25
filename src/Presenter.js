@@ -219,7 +219,11 @@ class Presenter {
 	        var y = e.pageY - this.offsetTop;
 	        
 	        let p_value = presenter._fOTW.getPhysicalPixelValueFromScreenMouse(x, y);
-	        presenter._view.setPhysicalValue(p_value);
+			presenter._view.setPhysicalValue(p_value);
+			let raDec = presenter._fOTW.getAstroCoordinatesFromFITS(x, 512 - y);
+			presenter._view.setRADecValue (raDec[0], raDec[1]);
+			presenter._view.setFITSxyValue (x, 512 - y);
+
 	    });
 	}
 	
