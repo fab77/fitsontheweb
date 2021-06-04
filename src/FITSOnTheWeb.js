@@ -176,20 +176,32 @@ class FITSOnTheWeb {
 	getAstroCoordinatesFromFITS(i_mouse, j_mouse){
 		result = {};
 
+
+		// h_pixel, w_pixel
+		
 		// projecting
 		let xyGridProj = this.getFacetProjectedCoordinates ();
 
-		
-		let i = (i_mouse + 0.5) / this._header.getValue('NAXIS1');
-		let j = (j_mouse + 0.5) / this._header.getValue('NAXIS2');
+		/**
+	 	 * (h_pixel,w_pixel) = (0,0) correspond to the lower-left corner of the facet in the image
+		 * (h_pixel,w_pixel) = (1,1) is the upper right corner
+		 * dimamond in figure 1 from "Mapping on the HEalpix grid" paper
+		 * (0,0) leftmost corner
+		 * (1,0) upper corner
+		 * (0,1) lowest corner
+		 * (1,1) rightmost corner
+		 * Thanks YAGO! :p
+		 */
+		let h_pixel = (i_mouse + 0.5) / this._header.getValue('NAXIS1');
+		let w_pixel = (j_mouse + 0.5) / this._header.getValue('NAXIS2');
 
 		
 		let xInterval = Math.abs(xyGridProj.max_x - xyGridProj.min_x) / 2.0;
 		let yInterval = Math.abs(xyGridProj.max_y - xyGridProj.min_y) / 2.0;
 		let yMean = Math.abs(xyGridProj.max_y + xyGridProj.min_y) / 2.0;
-		// linear interpolation
-		let x_mouse = xyGridProj.max_x - xInterval * (i + j);
-		let y_mouse = yMean - yInterval * (j - i);
+		// bi-linear interpolation
+		let x_mouse = xyGridProj.max_x - xInterval * (h_pixel + w_pixel);
+		let y_mouse = yMean - yInterval * (w_pixel - h_pixel);
 		
 		
 		// invert transformation - unproject 
@@ -197,8 +209,8 @@ class FITSOnTheWeb {
 
 		
 		console.table({
-			"i":i,
-			"j":j,
+			"h_pixel":h_pixel,
+			"w_pixel":w_pixel,
 			"xyGridProj.min_x":xyGridProj.min_x, 
 			"xyGridProj.max_x":xyGridProj.max_x,
 			"xyGridProj.min_y":xyGridProj.min_y, 
@@ -247,7 +259,7 @@ class FITSOnTheWeb {
 			"gridPointsDeg": []
 		}
 		
-		console.log("HEALPix phi\tHEALPix theta\tcotheta (deg)\tcotheta (rad)");
+		// console.log("HEALPix phi\tHEALPix theta\tcotheta (deg)\tcotheta (rad)");
 
 		for (let j = 0; j < pointings.length; j++) {
 			let coThetaRad = pointings[j].theta;
@@ -284,11 +296,10 @@ class FITSOnTheWeb {
 			}
 		}
 
-		for (let k =0; k < result.gridPointsDeg.length; k+=2) {
+		// for (let k =0; k < result.gridPointsDeg.length; k+=2) {
 			// console.table({"PROJ x":result.gridPointsDeg[k],"PROJ y":result.gridPointsDeg[k + 1]});
-
 			// console.log("PROJ (x, y) = "+ result.gridPointsDeg[k] +", "+ result.gridPointsDeg[k+1] );
-		}
+		// }
 		return result;
 	}
 	
@@ -317,8 +328,8 @@ class FITSOnTheWeb {
 				w = 1;
 			}
 
-			let sigma = Math.sqrt( K * (1 - Math.abs(Hploc.sin(thetaRad) ) ) );
-			let phi_c = - 180 + ( 2 * Math.floor( ((phiDeg + 180) * H/360) + ((1 - w)/2) ) + w ) * ( 180 / H );
+			let sigma = Math.sqrt( K * (1 - Math.abs(Hploc.sin(thetaRad)) ) );
+			let phi_c = - 180 + ( 2 * Math.floor( ((phiRad + 180) * H/360) + ((1 - w)/2) ) + w ) * ( 180 / H );
 			
 			x_grid = phi_c + (phiDeg - phi_c) * sigma;
 			y_grid = (180  / H) * ( ((K + 1)/2) - sigma);
@@ -360,7 +371,7 @@ class FITSOnTheWeb {
 			let thetaRad = Hploc.asin( 1 - (sigma * sigma) / K );
 			thetaDeg = thetaRad * RAD2DEG;
 			if (y_mouse <= 0){
-				thetadeg *= -1;
+				thetaDeg *= -1;
 			}
 		}
 		return [phiDeg, thetaDeg];
