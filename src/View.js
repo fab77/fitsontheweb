@@ -364,6 +364,10 @@ class View{
 		document.getElementById('raDec').innerHTML = ra+", "+dec;
 	}
 
+	setXYValue (x, y){
+		document.getElementById('intermediateXY').innerHTML = x+", "+y;
+	}
+
 	setFITSxyValue (fits_x, fits_y){
 		document.getElementById('xy').innerHTML = "("+fits_x+", "+fits_y+")";
 	}
@@ -375,7 +379,9 @@ class View{
 				"		<div id='pixelValue'></div>" +
 				"		<label for='raDec'>RA, Dec:</label>" +
 				"		<div id='raDec'></div>" +
-				"		<label for='xy'>(x, y):</label>" +
+				"		<label for='intermediateXY'>intermediate world coords (x, y):</label>" +
+				"		<div id='intermediateXY'></div>" +
+				"		<label for='xy'>Pixel coordinates (i, j):</label>" +
 				"		<div id='xy'></div>" +
 				"	</div>";
 		return html;

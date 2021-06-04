@@ -1,6 +1,6 @@
 //import './style.css';
 require("./style.css");
-
+// var wcs = require('wcs');
 import App from './App';
 
 

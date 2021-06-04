@@ -46,21 +46,21 @@ class Presenter {
 						self._view.setFitsPreview(img);	
 						self._view.setMinMax(min, max);	
 						
-						$("img").mousemove(function (e) {
+						// $("img").mousemove(function (e) {
 
-							var x = e.pageX - this.offsetLeft;
-					        var y = e.pageY - this.offsetTop;
+						// 	var x = e.pageX - this.offsetLeft;
+					    //     var y = e.pageY - this.offsetTop;
 					        
-					        let naxis1 = self._fOTW.header.getValue("NAXIS1");
-					        let naxis2 = self._fOTW.header.getValue("NAXIS2");
-					        let width = $(this).width();
-					        let height = $(this).height();
-					        let i = x;
-					        let j = naxis2 - y;
+					    //     let naxis1 = self._fOTW.header.getValue("NAXIS1");
+					    //     let naxis2 = self._fOTW.header.getValue("NAXIS2");
+					    //     let width = $(this).width();
+					    //     let height = $(this).height();
+					    //     let i = x;
+					    //     let j = naxis2 - y;
 					        
-					        let p_value = self._fOTW.getPhysicalPixelValue(x, y);
-					        console.log("i: "+i+" j: "+j+" p_value: "+p_value);
-					    });
+					    //     let p_value = self._fOTW.getPhysicalPixelValue(x, y);
+					    //     console.log("i: "+i+" j: "+j+" p_value: "+p_value);
+					    // });
 
 					}, 
 					self._view.selectedColorMap, 
@@ -69,11 +69,11 @@ class Presenter {
 			
 			self.addEventListener (self);
 			
-			self._view.getFITSImgFromDOM.on("click", function (e) {
-				var x = e.pageX - this.offsetLeft;
-		        var y = e.pageY - this.offsetTop;
-		        alert("X Coordinate: " + x + " Y Coordinate: " + y);
-			});
+			// self._view.getFITSImgFromDOM.on("click", function (e) {
+			// 	var x = e.pageX - this.offsetLeft;
+		    //     var y = e.pageY - this.offsetTop;
+		    //     alert("X Coordinate: " + x + " Y Coordinate: " + y);
+			// });
 			
 
         });
@@ -220,8 +220,9 @@ class Presenter {
 	        
 	        let p_value = presenter._fOTW.getPhysicalPixelValueFromScreenMouse(x, y);
 			presenter._view.setPhysicalValue(p_value);
-			let raDec = presenter._fOTW.getAstroCoordinatesFromFITS(x, 512 - y);
-			presenter._view.setRADecValue (raDec[0], raDec[1]);
+			let coords = presenter._fOTW.getAstroCoordinatesFromFITS(x, 512 - y);
+			presenter._view.setRADecValue (coords.skyCoords[0], coords.skyCoords[1]);
+			presenter._view.setXYValue (coords.xyCoords[0], coords.xyCoords[1]);
 			presenter._view.setFITSxyValue (x, 512 - y);
 
 	    });
