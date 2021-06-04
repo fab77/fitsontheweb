@@ -198,7 +198,8 @@ class FITSOnTheWeb {
 		
 		let xInterval = Math.abs(xyGridProj.max_x - xyGridProj.min_x) / 2.0;
 		let yInterval = Math.abs(xyGridProj.max_y - xyGridProj.min_y) / 2.0;
-		let yMean = Math.abs(xyGridProj.max_y + xyGridProj.min_y) / 2.0;
+		let yMean = (xyGridProj.max_y + xyGridProj.min_y) / 2.0;
+		// let yMean = (xyGridProj.max_y + xyGridProj.min_y) / 2.0;
 		// bi-linear interpolation
 		let x_mouse = xyGridProj.max_x - xInterval * (h_pixel + w_pixel);
 		let y_mouse = yMean - yInterval * (w_pixel - h_pixel);
@@ -226,6 +227,10 @@ class FITSOnTheWeb {
 		// console.log("x_mouse: "+x_mouse);
 		// console.log("y_mouse: "+y_mouse);
 
+		if (raDecDeg[0] > 360){
+			raDecDeg[0] -= 360;
+		}
+
 		return {
 			"skyCoords": [raDecDeg[0], raDecDeg[1]],
 			"xyCoords": [x_mouse, y_mouse]
@@ -243,10 +248,25 @@ class FITSOnTheWeb {
 		let healpix = new Healpix(nside);
 		let cornersVec3 = healpix.getBoundariesWithStep(pix, 1);
 		let pointings = [];
+		
 		for (let i = 0; i < cornersVec3.length; i++) {
 			pointings[i] = new Pointing(cornersVec3[i]);
 			console.log(pointings[i].phi, pointings[i].theta);
 		}
+
+		// case when RA is just crossing the origin (e.g. 357deg - 3deg)
+		for (let i = 0; i < pointings.length - 1; i+=1) {
+			let a = pointings[i].phi;
+			let b = pointings[i+1].phi;
+			if (Math.abs(a - b) > Math.PI) {
+				if (pointings[i].phi < pointings[i+1].phi) {
+					pointings[i].phi += 2 * Math.PI;
+				}else{
+					pointings[i+1].phi += 2 * Math.PI;
+				}
+			} 
+		}
+
 		let x_grid, y_grid;
 		
 		let gridPoints = [];
@@ -288,13 +308,24 @@ class FITSOnTheWeb {
 			if (isNaN(result.min_y) || xyDeg[1] < result.min_y) {
 				result.min_y = xyDeg[1];
 			}
+
 			if (isNaN(result.max_x) || xyDeg[0] > result.max_x) {
+
 				result.max_x = xyDeg[0];
 			}
 			if (isNaN(result.min_x) || xyDeg[0] < result.min_x) {
 				result.min_x = xyDeg[0];
 			}
 		}
+
+		// case when RA is just crossing the origin (e.g. 357deg - 3deg)
+		// if ( Math.abs (result.max_x - result.min_x) > 180){
+		// 	let tmp = result.max_x;
+		// 	result.max_x = result.min_x + 360;
+		// 	result.min_x = tmp;
+
+		// 	// result.min_x += 360;
+		// }
 
 		// for (let k =0; k < result.gridPointsDeg.length; k+=2) {
 			// console.table({"PROJ x":result.gridPointsDeg[k],"PROJ y":result.gridPointsDeg[k + 1]});
