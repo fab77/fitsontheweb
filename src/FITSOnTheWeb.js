@@ -444,8 +444,13 @@ class FITSOnTheWeb {
 		let xInterval = Math.abs(xyGridProj.max_x - xyGridProj.min_x);
 		let yInterval = Math.abs(xyGridProj.max_y - xyGridProj.min_y);
 
-		let pi_norm = (pxy[0] - xyGridProj.min_x) / xInterval;
-		let pj_norm = (pxy[1] - xyGridProj.min_y) / yInterval;
+		let pi_norm, pj_norm;
+		if ( (xyGridProj.min_x > 360 || xyGridProj.max_x > 360) && pxy[0] < xyGridProj.min_x) {
+			pi_norm = (pxy[0] + 360 - xyGridProj.min_x) / xInterval;	
+		}else {
+			pi_norm = (pxy[0] - xyGridProj.min_x) / xInterval;
+		}
+		pj_norm = (pxy[1] - xyGridProj.min_y) / yInterval;
 		
 		i = 0.5 - (pi_norm - pj_norm);
 		j = (pi_norm + pj_norm) - 0.5;
