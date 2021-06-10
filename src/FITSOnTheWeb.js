@@ -432,6 +432,28 @@ class FITSOnTheWeb {
 
 	}
 
+	computeFITSij (radeg, decdeg) {
+		let phirad = radeg * DEG2RAD;
+		let thetarad = decdeg * DEG2RAD;
+		let pxy = this.projectOnHPXGrid(phirad, thetarad);
+
+		let xyGridProj = this.getFacetProjectedCoordinates ();
+
+		let i,j;
+		
+		let xInterval = Math.abs(xyGridProj.max_x - xyGridProj.min_x);
+		let yInterval = Math.abs(xyGridProj.max_y - xyGridProj.min_y);
+
+		let pi_norm = (pxy[0] - xyGridProj.min_x) / xInterval;
+		let pj_norm = (pxy[1] - xyGridProj.min_y) / yInterval;
+		
+		i = 0.5 - (pi_norm - pj_norm);
+		j = (pi_norm + pj_norm) - 0.5;
+		i = Math.floor(i * 512);
+		j = Math.floor(j * 512) + 1;
+		return [i , j];
+	}
+
 }
 	
 export default FITSOnTheWeb; 

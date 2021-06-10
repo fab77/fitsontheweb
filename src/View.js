@@ -35,6 +35,8 @@ class View{
 		
 		this._container.append(this.initPixelValue());
 		this._container.append("<hr>");
+		this._container.append(this.initValueByCoords());
+		this._container.append("<hr>");
 		
 		this._container.append(this.initResultBoxes());
 		
@@ -224,6 +226,20 @@ class View{
 
 	}
 
+
+	addRADecHandler (handler) {
+
+		$("#computeValueByCoords").click(function(e){
+
+			console.log($("#raj2000").val());
+			console.log($("#decj2000").val());
+
+			handler($("#raj2000").val(), $("#decj2000").val());
+		});
+
+
+	}
+
 	
 	initErrorBox () {
 		let html = 
@@ -371,6 +387,16 @@ class View{
 	setFITSxyValue (fits_x, fits_y){
 		document.getElementById('xy').innerHTML = "("+fits_x+", "+fits_y+")";
 	}
+
+	setImageCoords (i, j) {
+		document.getElementById('imageCoords').innerHTML = "("+i+", "+j+")";
+	}
+
+	setPhysicalValue2 (pval) {
+		document.getElementById('pixelValue2').innerHTML = pval;
+	}
+
+	
 	
 	initPixelValue() {
 		
@@ -383,6 +409,20 @@ class View{
 				"		<div id='intermediateXY'></div>" +
 				"		<label for='xy'>Pixel coordinates (i, j):</label>" +
 				"		<div id='xy'></div>" +
+				"	</div>";
+		return html;
+	}
+
+	initValueByCoords() {
+		
+		let html = "<div id='valueByCoordsContainer'>" +
+				"		<label for='raj2000'>RA (J2000):</label>" +
+				"		<input type='text' name='raj2000' id='raj2000' placeholder='-- RA degrees --'/>" +
+				"		<label for='decj2000'>Dec (J2000):</label>" +
+				"		<input type='text' name='decj2000' id='decj2000' placeholder='-- Dec degrees --'/>" +
+				"		<input type='button' name='computeValueByCoords' id='computeValueByCoords'  value='go'/>" +
+				"		<div id='imageCoords'></div>" +
+				"		<div id='pixelValue2'></div>" +
 				"	</div>";
 		return html;
 	}
@@ -408,7 +448,10 @@ class View{
 					"</div>";
 		return html;
 	}
+
 	
-}
+	
+
+10}
 
 export default View;

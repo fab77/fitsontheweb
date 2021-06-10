@@ -207,12 +207,18 @@ class Presenter {
 			
 		} );
 
+		this._view.addRADecHandler(function (radeg, decdeg) {
+
+			console.log("addRADecHandler");
+			let ij = self._fOTW.computeFITSij(radeg, decdeg);
+			self._view.setImageCoords(ij[0], ij[1]);
+		});
+
 	}
 	
 	
 	addEventListener (presenter) {
 		
-		console.log("ping");
 		$("img").mousemove(function (e) {
 	
 			var x = e.pageX - this.offsetLeft;
@@ -224,11 +230,16 @@ class Presenter {
 			presenter._view.setRADecValue (coords.skyCoords[0], coords.skyCoords[1]);
 			presenter._view.setXYValue (coords.xyCoords[0], coords.xyCoords[1]);
 			presenter._view.setFITSxyValue (x, 512 - y);
-
+			
+			
+			let ij = presenter._fOTW.computeFITSij(coords.skyCoords[0], coords.skyCoords[1]);
+			presenter._view.setImageCoords(ij[0], ij[1]);
+			let pval = presenter._fOTW.getPhysicalPixelValueFromScreenMouse(ij[0], ij[1]);
+			presenter._view.setPhysicalValue2(pval);
 	    });
 	}
 	
-		
+	
 	
 }
 
