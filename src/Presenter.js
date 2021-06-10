@@ -212,6 +212,8 @@ class Presenter {
 			console.log("addRADecHandler");
 			let ij = self._fOTW.computeFITSij(radeg, decdeg);
 			self._view.setImageCoords(ij[0], ij[1]);
+			let pval = self._fOTW.getPhysicalPixelValueFromScreenMouse(ij[0], ij[1]);
+			self._view.setPhysicalValue2(pval);
 		});
 
 	}
