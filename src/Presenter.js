@@ -216,6 +216,14 @@ class Presenter {
 			self._view.setPhysicalValue2(pval);
 		});
 
+
+		this._view.addCutoutHandler(function (radeg, rastep, decdeg, decstep) {
+
+			console.log("addCutoutHandler");
+			let fitsUrl = self._fOTW.cutOutByBox(radeg, rastep, decdeg, decstep);
+			self._view.addDownload(fitsUrl);
+		});
+
 	}
 	
 	
@@ -241,8 +249,9 @@ class Presenter {
 	    });
 	}
 	
+
 	
-	
+
 }
 
 export default Presenter;

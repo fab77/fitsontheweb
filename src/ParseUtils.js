@@ -40,7 +40,9 @@ class ParseUtils {
 	}
 	
 	
-	
+	static generate16bit2sComplement (val) {
+		throw new TypeError("not implemented yet");
+	}
 	
 	static parse16bit2sComplement(data, offset) {
 		let byte1 = ParseUtils.getByteAt(data, offset);
@@ -83,6 +85,12 @@ class ParseUtils {
 
 	}
 	
+	/**
+	 * 
+	 * @param {*} data string?
+	 * @param {*} offset offset in the data
+	 * @returns returns an integer between 0 and 65535 representing the UTF-16 code unit at the given index.
+	 */
 	static getByteAt (data, offset) {
 		let dataOffset = 0;
 		return data.charCodeAt(offset + dataOffset) & 0xFF;

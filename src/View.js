@@ -1,6 +1,13 @@
 /**
- * @author Fabrizio Giordano (Fab)
+ * Summary. (bla bla bla)
+ *
+ * Description. (bla bla bla)
+ * 
+ * @link   github https://github.com/fab77/fitsontheweb
+ * @author Fabrizio Giordano (Fab) <fabriziogiordano77@gmail.com>
+ * import GnomonicProjection from './GnomonicProjection';
  */
+
 
 import $ from "jquery";
 class View{
@@ -37,6 +44,9 @@ class View{
 		this._container.append("<hr>");
 		this._container.append(this.initValueByCoords());
 		this._container.append("<hr>");
+		this._container.append(this.initCutout());
+		this._container.append("<hr>");
+		
 		
 		this._container.append(this.initResultBoxes());
 		
@@ -229,15 +239,32 @@ class View{
 
 	addRADecHandler (handler) {
 
-		$("#computeValueByCoords").click(function(e){
+		// $("#computeValueByCoords").click(function(e){
+		$("#computeValueByCoords").on("click", function(e){
 
-			console.log($("#raj2000").val());
-			console.log($("#decj2000").val());
+			// console.log($("#raj2000").val());
+			// console.log($("#decj2000").val());
 
 			handler($("#raj2000").val(), $("#decj2000").val());
 		});
 
 
+	}
+
+	addCutoutHandler (handler) {
+		$("#computeCutout").on("click", function(e){
+
+			console.log($("#minra").val());
+			console.log($("#stepra").val());
+			console.log($("#mindec").val());
+			console.log($("#stepdec").val());
+
+			let minra = parseFloat($("#minra").val());
+			let stepra = parseFloat($("#stepra").val());
+			let mindec = parseFloat($("#mindec").val());
+			let stepdec = parseFloat($("#stepdec").val());
+			handler(minra, stepra, mindec, stepdec);
+		});
 	}
 
 	
@@ -416,6 +443,7 @@ class View{
 	initValueByCoords() {
 		
 		let html = "<div id='valueByCoordsContainer'>" +
+				"		<center>Pixel value by coordinates</center>" +
 				"		<label for='raj2000'>RA (J2000):</label>" +
 				"		<input type='text' name='raj2000' id='raj2000' placeholder='-- RA degrees --'/>" +
 				"		<label for='decj2000'>Dec (J2000):</label>" +
@@ -425,6 +453,34 @@ class View{
 				"		<div id='pixelValue2'></div>" +
 				"	</div>";
 		return html;
+	}
+
+
+	initCutout() {
+		
+		let html = "<div id='cutoutContainer'>" +
+				"		<center>FITS cut-out</center>" +
+				"		<label for='minra'>min RA (J2000):</label>" +
+				"		<input type='text' name='minra' id='minra' value='0.21423' placeholder='-- RA degrees --'/>" +
+				"		<label for='stepra'>step RA:</label>" +
+				"		<input type='text' name='stepra' id='stepra' value='0.05' placeholder='-- RA degrees --'/>" +
+
+				"		<label for='mindec'>Dec (J2000):</label>" +
+				"		<input type='text' name='mindec' id='mindec' value='-0.88595' placeholder='-- Dec degrees --'/>" +
+				"		<label for='stepdec'>step Dec:</label>" +
+				"		<input type='text' name='stepdec' id='stepdec' value='0.3' placeholder='-- Dec degrees --'/>" +
+				"		<input type='button' name='computeCutout' id='computeCutout'  value='go'/>" +
+				"	</div>";
+		return html;
+	}
+
+	addDownload (fitsUrl) {
+		let a = document.createElement('a');
+		a.href = fitsUrl;
+		a.download = 'test.fits';
+		a.text = 'test';
+		$('#cutoutContainer').append("<br>");
+		$('#cutoutContainer').append(a);
 	}
 	
 	initResultBoxes(){

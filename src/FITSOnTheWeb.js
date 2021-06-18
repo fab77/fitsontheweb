@@ -5,10 +5,10 @@ import ParseHeader from './ParseHeader';
 import ParsePayload from './ParsePayload';
 import {Hploc, Vec3, Pointing} from "healpixjs";
 import Healpix from "healpixjs";
+import ProjectionFactory from './projections/ProjectionFactory';
+import {constants} from './Constants';
+import FITSWriter from './fitswriter/FITSWriter';
 
-
-
-// import {asin} from "healpixjs";
 
 /**
  * Summary. (bla bla bla)
@@ -51,6 +51,9 @@ class FITSOnTheWeb {
 	_colorMap;
 	_tFunction;
 	_callback;
+	_xyGridProj;
+	_encodedFitsData;
+
 	/**
 	 * @param url: FITS HTTP URL
 	 * @param in_colorMap: array in the form of one from ColorMap.js
@@ -64,14 +67,11 @@ class FITSOnTheWeb {
 		this._localFile = localFile;
 		this.firstRun = true;
 		
-		
 		this._colorMap = in_colorMap;
 		this._tFunction = in_tFunction;
 		
-		
 		var self = this;
 
-		
 		if (this._url !== undefined && this._url != null){
 			let fitsLoader = new FitsLoader(this._url, null, this);
 		}else if (this._localFile !== undefined && this._localFile != null){
@@ -83,8 +83,15 @@ class FITSOnTheWeb {
 	}
 	
 	onFitsLoaded (fitsData) {
+		this._encodedFitsData = fitsData;
 		this._img = this.processFits(fitsData);
+		this._xyGridProj = this.getFacetProjectedCoordinates ();
 		this._callback(this._img, this._payload._PVMIN, this._payload._PVMAX);
+		
+	}
+
+	getEncodedFitsData () {
+		return this._encodedFitsData;
 	}
 	
 	reprocess(min, max){
@@ -171,6 +178,15 @@ class FITSOnTheWeb {
 	getPhysicalPixelValueFromScreenMouse (i, j) {
 		return this._payload.getPhysicalPixelValueFromScreenMouse (i, j);
 	}
+	
+
+	getPixelValueFromScreenMouse (i, j) {
+		let idx =   ( (this._header.getValue("NAXIS2")-j-1) * this._header.getValue("NAXIS1") ) + (i-1) ;
+		let val = this._encodedFitsData[2880 + idx];
+		return val;
+		// return this._payload.getPixelValueFromScreenMouse (i, j);
+	}
+	
 
 
 	getAstroCoordinatesFromFITS(i_mouse, j_mouse){
@@ -180,7 +196,7 @@ class FITSOnTheWeb {
 		// h_pixel, w_pixel
 		
 		// projecting
-		let xyGridProj = this.getFacetProjectedCoordinates ();
+		//let xyGridProj = this.getFacetProjectedCoordinates ();
 
 		/**
 	 	 * (h_pixel,w_pixel) = (0,0) correspond to the lower-left corner of the facet in the image
@@ -196,12 +212,12 @@ class FITSOnTheWeb {
 		let w_pixel = (j_mouse + 0.5) / this._header.getValue('NAXIS2');
 
 		
-		let xInterval = Math.abs(xyGridProj.max_x - xyGridProj.min_x) / 2.0;
-		let yInterval = Math.abs(xyGridProj.max_y - xyGridProj.min_y) / 2.0;
-		let yMean = (xyGridProj.max_y + xyGridProj.min_y) / 2.0;
+		let xInterval = Math.abs(this._xyGridProj.max_x - this._xyGridProj.min_x) / 2.0;
+		let yInterval = Math.abs(this._xyGridProj.max_y - this._xyGridProj.min_y) / 2.0;
+		let yMean = (this._xyGridProj.max_y + this._xyGridProj.min_y) / 2.0;
 		// let yMean = (xyGridProj.max_y + xyGridProj.min_y) / 2.0;
 		// bi-linear interpolation
-		let x_mouse = xyGridProj.max_x - xInterval * (h_pixel + w_pixel);
+		let x_mouse = this._xyGridProj.max_x - xInterval * (h_pixel + w_pixel);
 		let y_mouse = yMean - yInterval * (w_pixel - h_pixel);
 		
 		
@@ -209,23 +225,18 @@ class FITSOnTheWeb {
 		let raDecDeg = this.unproject(x_mouse, y_mouse);
 
 		
-		console.table({
-			"h_pixel":h_pixel,
-			"w_pixel":w_pixel,
-			"xyGridProj.min_x":xyGridProj.min_x, 
-			"xyGridProj.max_x":xyGridProj.max_x,
-			"xyGridProj.min_y":xyGridProj.min_y, 
-			"xyGridProj.max_y":xyGridProj.max_y, 
-			"xInterval deg":xInterval,
-			"yInterval deg":yInterval,
-			"x_mouse":x_mouse,
-			"y_mouse":y_mouse});
-
-		console.log("########################################################################");
-		// console.log("xStep step deg: "+xStep);
-		// console.log("yStep step deg: "+yStep);
-		// console.log("x_mouse: "+x_mouse);
-		// console.log("y_mouse: "+y_mouse);
+		// console.table({
+		// 	"h_pixel":h_pixel,
+		// 	"w_pixel":w_pixel,
+		// 	"xyGridProj.min_x":this._xyGridProj.min_x, 
+		// 	"xyGridProj.max_x":this._xyGridProj.max_x,
+		// 	"xyGridProj.min_y":this._xyGridProj.min_y, 
+		// 	"xyGridProj.max_y":this._xyGridProj.max_y, 
+		// 	"xInterval deg":xInterval,
+		// 	"yInterval deg":yInterval,
+		// 	"x_mouse":x_mouse,
+		// 	"y_mouse":y_mouse});
+		// console.log("########################################################################");
 
 		if (raDecDeg[0] > 360){
 			raDecDeg[0] -= 360;
@@ -437,26 +448,89 @@ class FITSOnTheWeb {
 		let thetarad = decdeg * DEG2RAD;
 		let pxy = this.projectOnHPXGrid(phirad, thetarad);
 
-		let xyGridProj = this.getFacetProjectedCoordinates ();
+		// let xyGridProj = this.getFacetProjectedCoordinates ();
 
 		let i,j;
 		
-		let xInterval = Math.abs(xyGridProj.max_x - xyGridProj.min_x);
-		let yInterval = Math.abs(xyGridProj.max_y - xyGridProj.min_y);
+		let xInterval = Math.abs(this._xyGridProj.max_x - this._xyGridProj.min_x);
+		let yInterval = Math.abs(this._xyGridProj.max_y - this._xyGridProj.min_y);
 
 		let pi_norm, pj_norm;
-		if ( (xyGridProj.min_x > 360 || xyGridProj.max_x > 360) && pxy[0] < xyGridProj.min_x) {
-			pi_norm = (pxy[0] + 360 - xyGridProj.min_x) / xInterval;	
+		if ( (this._xyGridProj.min_x > 360 || this._xyGridProj.max_x > 360) && pxy[0] < this._xyGridProj.min_x) {
+			pi_norm = (pxy[0] + 360 - this._xyGridProj.min_x) / xInterval;	
 		}else {
-			pi_norm = (pxy[0] - xyGridProj.min_x) / xInterval;
+			pi_norm = (pxy[0] - this._xyGridProj.min_x) / xInterval;
 		}
-		pj_norm = (pxy[1] - xyGridProj.min_y) / yInterval;
+		pj_norm = (pxy[1] - this._xyGridProj.min_y) / yInterval;
 		
 		i = 0.5 - (pi_norm - pj_norm);
 		j = (pi_norm + pj_norm) - 0.5;
 		i = Math.floor(i * 512);
 		j = Math.floor(j * 512) + 1;
 		return [i , j];
+	}
+	
+
+	/**
+	 * 
+	 * @param {decimal degrees} leftMostRa 
+	 * @param {decimal degrees} lowestDec 
+	 * @param {decimal degrees} deltaRa 
+	 * @param {decimal degrees} deltaDec 
+	 */
+	cutOutByBox (leftMostRa, deltaRa, lowestDec, deltaDec) {
+
+		let projection = ProjectionFactory.getProjection(constants.PROJECTIONS.GNOMONIC);
+		let stepRa = Math.abs(this._xyGridProj.max_x - this._xyGridProj.min_x) / this._header.getValue('NAXIS1');
+		let stepDec = Math.abs(this._xyGridProj.max_y - this._xyGridProj.min_y) / this._header.getValue('NAXIS2');
+		let fitsData = projection.generateMatrixData(leftMostRa, deltaRa, stepRa, lowestDec, deltaDec, stepDec, this);
+		let fitsWriter = new FITSWriter();
+
+		let fitsHeaderDetails = {
+			"bitpix": this._header.getValue('BITPIX'),
+			"blank": this._header.getValue('BLANK'),
+			"bscale": this._header.getValue('BSCALE'),
+			"bzero": this._header.getValue('BZERO'),
+			"naxis1": fitsData.nrows,
+			"naxis2": fitsData.data.length/fitsData.nrows,
+			"crval1": fitsData.data[0],
+			"crval2": fitsData.data[1]
+		};
+		fitsWriter.run(fitsData.data, fitsHeaderDetails, stepRa, stepDec);
+		let fitsURL = fitsWriter.typedArrayToURL();
+		return fitsURL;
+	}
+
+	getRAStep () {
+
+	}
+
+	getDecStep () {
+
+	}
+
+
+	getXDelta (raDeg, deltaRa) {
+
+	}
+
+
+	/**
+	 * 
+	 * @param {*} centerRa degrees
+	 * @param {*} centerDec degrees
+	 * @param {*} radius degrees
+	 */
+	 circleCutOut (centerRa, centerDec, radius, projection){
+
+		// instantiate the projection obj basing on MyProj skeleton (pix2world in the new proj)
+		// create new FITS header with the projection 
+		// (create the FITS matrix with pixel <-> coordinates RA, Dec )
+
+		// for each RA,Dec from the new FITS
+		// 	compute pix_value using HEALPix projection above
+		// save to the payload of the resulting FITS
+
 	}
 
 }

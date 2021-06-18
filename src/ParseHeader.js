@@ -61,7 +61,12 @@ class ParseHeader {
 		let val;
 
 		let str;
-		
+
+		/**
+		 * TODO check the projection. Since at tne moment only HPX is supported as input FITS, throw an exception if the input is in a different projection
+		 * for the future: create a factory for different possible supported projections 
+		 * (check CTYPEia)
+		 */
 		// setting BZERO and BSCALE  default values.
 		this._header.setHeaderItem("BZERO", 0);
 		this._header.setHeaderItem("BSCALE", 1);
