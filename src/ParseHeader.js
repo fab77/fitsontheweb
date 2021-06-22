@@ -146,6 +146,7 @@ class ParseHeader {
 		while(this._offset < length && ParseUtils.getStringAt(this._data, this._offset, 1) == " ") {
 			this._offset++;
 		}
+		console.debug("header offset in bytes: "+this._offset);
 	}
 	
 	trim (s) {

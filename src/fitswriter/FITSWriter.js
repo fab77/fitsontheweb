@@ -64,7 +64,7 @@ class FITSWriter {
             str += " ";
         }
         
-        let ab = new ArrayBuffer(str.length * 2);
+        let ab = new ArrayBuffer(str.length);
         // Javascript character occupies 2 16-bit -> reducing them to 1 byte
         this._headerArray = new Uint8Array(ab);
         for (let i = 0; i <  str.length; i++) {
@@ -118,44 +118,25 @@ class FITSWriter {
         let dataColsLength = arrayData.length / dataRowLength;
         let ab;
 
-        // Javascript array types described at https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays
-        // if (bitpix == 8) {
-        //     ab = new ArrayBuffer(dataRowLength * dataColsLength);
-        //     this._payloadArray = new Uint8Array(ab);
-        // } else if (bitpix == 16) {
-        //     ab = new ArrayBuffer(dataRowLength * dataColsLength * 2);
-        //     this._payloadArray = new Int16Array(ab);
-        // } else if (bitpix == 32) {
-        //     ab = new ArrayBuffer(dataRowLength * dataColsLength * 4);
-        //     this._payloadArray = new Int32Array(ab);
-        // } else if (bitpix == -32) {
-        //     ab = new ArrayBuffer(dataRowLength * dataColsLength * 4);
-        //     this._payloadArray = new Float32Array(ab);
-        // } else if (bitpix == -64) {
-        //     throw new TypeError("64-bit IEEE double precision floating point not implemeted")
+
+        this._payloadArray = new Uint8Array(arrayData);
+
+        // ab = new ArrayBuffer(dataRowLength * dataColsLength * 2);
+        // this._payloadArray = new Uint8Array(ab);
+
+        // let fr = new FileReader();
+
+        // for (let i = 0; i < dataRowLength; i++) {
+        //     for ( let j = 0; j < dataColsLength; j++) {
+        //         // this._payloadArray[i * dataRowLength + j] = arrayData[i * dataRowLength + j];
+
+        //         let b1 = ParseUtils.getByteAt(arrayData[i * dataRowLength + j], 0);
+        //         let b2 = ParseUtils.getByteAt(arrayData[i * dataRowLength + j], 1);
+        //         this._payloadArray[i * dataRowLength + 2 * j] = b1;
+        //         this._payloadArray[i * dataRowLength + 2 * j + 1] = b2;
+
+        //     }
         // }
-
-        ab = new ArrayBuffer(dataRowLength * dataColsLength * 2);
-        this._payloadArray = new Uint8Array(ab);
-
-
-        for (let i = 0; i < dataRowLength; i++) {
-            for ( let j = 0; j < dataColsLength; j++) {
-                // this._payloadArray[i * dataRowLength + j] = arrayData[i * dataRowLength + j];
-
-                let b1 = ParseUtils.getByteAt(arrayData[i * dataRowLength + j], 0);
-                let b2 = ParseUtils.getByteAt(arrayData[i * dataRowLength + j], 1);
-                this._payloadArray[i * dataRowLength + 2 * j] = b1;
-                this._payloadArray[i * dataRowLength + 2 * j + 1] = b2;
-
-            }
-        }
-
-        // for (let h = 0; h < finalFits.length; h++) {
-        //     let val = ParseUtils.generate16bit2sComplement(finalFits[h]);
-        // }
-
-
         
     }
 
@@ -167,16 +148,18 @@ class FITSWriter {
         
         // this._fitsData = this._headerArray;
 
-
-        let bytes = new Uint8Array(this._headerArray.byteLength + this._payloadArray.byteLength);
+        console.debug("this._headerArray.byteLength "+this._headerArray.byteLength);
+        console.debug("this._headerArray.length "+this._headerArray.length);
+        let bytes = new Uint8Array(this._headerArray.length + this._payloadArray.length);
         bytes.set(this._headerArray, 0);
-        bytes.set(this._payloadArray, this._headerArray.byteLength);
+        bytes.set(this._payloadArray, this._headerArray.length);
         this._fitsData = bytes;
     }
 
     typedArrayToURL() {
         // return URL.createObjectURL(new Blob([this._fitsData.buffer], {type: 'application/fits'}));
-        return URL.createObjectURL(new Blob([this._fitsData], {type: 'application/fits'}));
+        let b = new Blob([this._fitsData], {type: 'application/fits'});
+        return URL.createObjectURL(b);
         
     }
 

@@ -8,6 +8,7 @@ import Healpix from "healpixjs";
 import ProjectionFactory from './projections/ProjectionFactory';
 import {constants} from './Constants';
 import FITSWriter from './fitswriter/FITSWriter';
+import ParseUtils from './ParseUtils';
 
 
 /**
@@ -182,8 +183,11 @@ class FITSOnTheWeb {
 
 	getPixelValueFromScreenMouse (i, j) {
 		let idx =   ( (this._header.getValue("NAXIS2")-j-1) * this._header.getValue("NAXIS1") ) + (i-1) ;
-		let val = this._encodedFitsData[2880 + idx];
-		return val;
+		// let val = this._encodedFitsData[2880/2 + idx];
+		let byte1 = ParseUtils.getByteAt(this._encodedFitsData, 2880 + idx);
+		let byte2 = ParseUtils.getByteAt(this._encodedFitsData, 2880 + idx + 1);
+		let h = 0x0000 | (byte1 << 8) | byte2;
+		return h;
 		// return this._payload.getPixelValueFromScreenMouse (i, j);
 	}
 	
