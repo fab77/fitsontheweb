@@ -10,14 +10,14 @@
 
 class AbstractProjection {
 
-    constrructor(){
+    constructor(minra, mindec, deltara, deltadec, fotw){
 
         if (new.target === AbstractProjection) {
             throw new TypeError("Abstract class cannot be instantiated.");
         }
 
-        if (this.createHeader === undefined) {
-            throw new TypeError("Must override createHeader()");
+        if (this.generateMatrix === undefined) {
+            throw new TypeError("Must override generateMatrix()");
         }
 
         /**
@@ -38,14 +38,6 @@ class AbstractProjection {
          */
         if (this.world2pix === undefined) {
             throw new TypeError("Must override world2pix(ra, dec)");
-        }
-
-        if (this.addToFITS === undefined) {
-            throw new TypeError("Must override addToFITS()");
-        }
-
-        if (this.getFITS === undefined) {
-            throw new TypeError("Must override getFITS()");
         }
 
     }

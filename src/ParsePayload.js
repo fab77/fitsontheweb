@@ -45,7 +45,7 @@ class ParsePayload{
 	_PVMAX;
 	_PVMIN_orig;
 	_PVMAX_orig;
-	_BLANK_pv;
+	// _BLANK_pv;
 	_physicalValues;
 	_tfPhysicalValues;
 	
@@ -435,8 +435,25 @@ class ParsePayload{
 	}
 
 	getPixelValueFromScreenMouse(i, j){
-		let idx =   ( (this._header.getValue("NAXIS2")-j-1) * this._header.getValue("NAXIS1") ) + (i-1) ;		
+				
+		let idx =   ( (this._header.getValue("NAXIS2")-j-1) * this._header.getValue("NAXIS1") ) + (i-1) ;
+
+		// let byte1 = ParseUtils.getByteAt(this._data, this._headerOffset + idx);
+		// let byte2 = ParseUtils.getByteAt(this._data, this._headerOffset + idx + 1);
+		// let h = 0x0000 | (byte1 << 8) | byte2;
+		// // return h;
+		
+		// let s = (h & 0x8000) >> 15;
+		// let res = h & 0x0000FFFF;
+	    
+	    // if (s){
+	    // 	res = (~h & 0x0000FFFF)  + 1;
+	    // 	return -1 * res;
+	    // }
+	    // return res;
+
 		return this._data[idx];
+		// return ParseUtils.parse16bit2sComplement(this._data, idx, true); 
 	}
 }
 

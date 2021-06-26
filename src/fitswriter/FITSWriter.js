@@ -30,9 +30,9 @@ class FITSWriter {
 
     }
 
-    run (arrayData, headerDetails) {
+    run (headerDetails) {
         this.prepareHeader(headerDetails);
-        this.preparePayload(arrayData, headerDetails.naxis1, headerDetails.bitpix);
+        this.preparePayload(headerDetails.data);
         this.prepareFITS();
     }
 
@@ -47,10 +47,13 @@ class FITSWriter {
         str += this.formatHeaderLine("BLANK", headerDetails.blank);
         str += this.formatHeaderLine("BSCALE", headerDetails.bscale);
         str += this.formatHeaderLine("BZERO", headerDetails.bzero);
-        str += this.formatHeaderLine("CTYPE1", "RA---TAN");
-        str += this.formatHeaderLine("CTYPE2", "DEC--TAN");
-        str += this.formatHeaderLine("CRPIX1", 0);
-        str += this.formatHeaderLine("CRPIX2", 0);
+
+        str += this.formatHeaderLine("CTYPE1", headerDetails.ctype1);
+        str += this.formatHeaderLine("CTYPE2", headerDetails.ctype2);
+        str += this.formatHeaderLine("CDELT1", headerDetails.cdelt1);
+        str += this.formatHeaderLine("CDELT2", headerDetails.cdelt2);
+        str += this.formatHeaderLine("CRPIX1", headerDetails.crpix1);
+        str += this.formatHeaderLine("CRPIX2", headerDetails.crpix2);
         str += this.formatHeaderLine("CRVAL1", headerDetails.crval1);
         str += this.formatHeaderLine("CRVAL2", headerDetails.crval2);
         str += this.formatHeaderLine("WCSNAME", "Test Gnomonic");
@@ -102,41 +105,22 @@ class FITSWriter {
             str += ' ';
         }
 
-        // value
-        str += "= ";
-        str += value;
-        for (let j = 80; j > 10 + vlen; j--) {
-            str += ' ';
+        if (keyword !== 'END')  {
+            // value
+            str += "= ";
+            str += value;
+            for (let j = 80; j > 10 + vlen; j--) {
+                str += ' ';
+            }
         }
         
         return str;
     }
 
-    preparePayload (arrayData, dataRowLength, bitpix) {
+    preparePayload (arrayData) {
 
-        let finalFits;
-        let dataColsLength = arrayData.length / dataRowLength;
-        let ab;
-
-
-        this._payloadArray = new Uint8Array(arrayData);
-
-        // ab = new ArrayBuffer(dataRowLength * dataColsLength * 2);
-        // this._payloadArray = new Uint8Array(ab);
-
-        // let fr = new FileReader();
-
-        // for (let i = 0; i < dataRowLength; i++) {
-        //     for ( let j = 0; j < dataColsLength; j++) {
-        //         // this._payloadArray[i * dataRowLength + j] = arrayData[i * dataRowLength + j];
-
-        //         let b1 = ParseUtils.getByteAt(arrayData[i * dataRowLength + j], 0);
-        //         let b2 = ParseUtils.getByteAt(arrayData[i * dataRowLength + j], 1);
-        //         this._payloadArray[i * dataRowLength + 2 * j] = b1;
-        //         this._payloadArray[i * dataRowLength + 2 * j + 1] = b2;
-
-        //     }
-        // }
+        // this._payloadArray = new Uint8Array(arrayData.buffer, 0, arrayData.byteLength);
+        this._payloadArray = arrayData;
         
     }
 

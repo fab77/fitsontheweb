@@ -85,7 +85,8 @@ class FITSOnTheWeb {
 	
 	onFitsLoaded (fitsData) {
 		this._encodedFitsData = fitsData;
-		this._img = this.processFits(fitsData);
+		// this._img = this.processFits(fitsData);
+		this._img = this.processFits(this._encodedFitsData);
 		this._xyGridProj = this.getFacetProjectedCoordinates ();
 		this._callback(this._img, this._payload._PVMIN, this._payload._PVMAX);
 		
@@ -182,13 +183,12 @@ class FITSOnTheWeb {
 	
 
 	getPixelValueFromScreenMouse (i, j) {
-		let idx =   ( (this._header.getValue("NAXIS2")-j-1) * this._header.getValue("NAXIS1") ) + (i-1) ;
-		// let val = this._encodedFitsData[2880/2 + idx];
-		let byte1 = ParseUtils.getByteAt(this._encodedFitsData, 2880 + idx);
-		let byte2 = ParseUtils.getByteAt(this._encodedFitsData, 2880 + idx + 1);
-		let h = 0x0000 | (byte1 << 8) | byte2;
-		return h;
-		// return this._payload.getPixelValueFromScreenMouse (i, j);
+		// let idx =   ( (this._header.getValue("NAXIS2")-j-1) * this._header.getValue("NAXIS1") ) + (i-1) ;
+		// let byte1 = ParseUtils.getByteAt(this._encodedFitsData, 2880 + idx);
+		// let byte2 = ParseUtils.getByteAt(this._encodedFitsData, 2880 + idx + 1);
+		// let h = 0x0000 | (byte1 << 8) | byte2;
+		// return h;
+		return this._payload.getPixelValueFromScreenMouse (i, j);
 	}
 	
 
@@ -482,25 +482,19 @@ class FITSOnTheWeb {
 	 * @param {decimal degrees} deltaRa 
 	 * @param {decimal degrees} deltaDec 
 	 */
-	cutOutByBox (leftMostRa, deltaRa, lowestDec, deltaDec) {
+	cutOutByBox (minra, deltara, mindec, deltadec) {
 
-		let projection = ProjectionFactory.getProjection(constants.PROJECTIONS.GNOMONIC);
-		let stepRa = Math.abs(this._xyGridProj.max_x - this._xyGridProj.min_x) / this._header.getValue('NAXIS1');
-		let stepDec = Math.abs(this._xyGridProj.max_y - this._xyGridProj.min_y) / this._header.getValue('NAXIS2');
-		let fitsData = projection.generateMatrixData(leftMostRa, deltaRa, stepRa, lowestDec, deltaDec, stepDec, this);
+		let projection = ProjectionFactory.getProjection(constants.PROJECTIONS.MERCATOR, minra, mindec, deltara, deltadec, this);
+
+		let fitsData = projection.generateMatrix();
 		let fitsWriter = new FITSWriter();
 
-		let fitsHeaderDetails = {
-			"bitpix": this._header.getValue('BITPIX'),
-			"blank": this._header.getValue('BLANK'),
-			"bscale": this._header.getValue('BSCALE'),
-			"bzero": this._header.getValue('BZERO'),
-			"naxis1": fitsData.nrows,
-			"naxis2": fitsData.data.length/fitsData.nrows,
-			"crval1": fitsData.data[0],
-			"crval2": fitsData.data[1]
-		};
-		fitsWriter.run(fitsData.data, fitsHeaderDetails, stepRa, stepDec);
+		fitsData.bitpix = this._header.getValue('BITPIX');
+		fitsData.blank = this._header.getValue('BLANK');
+		fitsData.bscale = this._header.getValue('BSCALE');
+		fitsData.bzero = this._header.getValue('BZERO');
+
+		fitsWriter.run(fitsData);
 		let fitsURL = fitsWriter.typedArrayToURL();
 		return fitsURL;
 	}
