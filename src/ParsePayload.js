@@ -48,7 +48,7 @@ class ParsePayload{
 	// _BLANK_pv;
 	_physicalValues;
 	_tfPhysicalValues;
-	
+	_bitpix;
 	_inverse;
 	_img;
 	
@@ -70,12 +70,10 @@ class ParsePayload{
 	constructor (header, fitsFile, headerOffset, colorMap, tFunction){
 		
 		this.values = [];
-		this.f = 0;
+		// this.f = 0;
 		
 		this._header = header;
-		this._headerOffset = headerOffset;
-
-		this._data = fitsFile;
+		this.u8data = new Uint8Array(fitsFile, headerOffset);
 		
 		this.firstRun = true;
 		
@@ -84,7 +82,8 @@ class ParsePayload{
 		this._PVMIN_orig = "NaN";
 		this._PVMAX_orig = "NaN";
 		this._BLANK_pv = this._header.getValue("BZERO") + this._header.getValue("BSCALE") * this._header.getValue("BLANK") || undefined;
-		
+		this._bitpix = this._header.getValue("BITPIX");
+
 		this._physicalValues = new Array(this._header.getValue("NAXIS1") * this._header.getValue("NAXIS2"));
 		
 		this._tfPhysicalValues = undefined;
@@ -109,75 +108,85 @@ class ParsePayload{
 		
 		this.applyScaleFunction(this._tFunction);
 		
-//		this.inspectParsedData ();
-		
-//		this.inspectScaledData ()
-		
         return this._img;
 
 	}
 	
 	parseData (in_min, in_max) {
 		
+    	let i = 0;
+		let px_val; // pixel value
+		let ph_val; // pixel physical value
 		
-		let length = (this._data.length === undefined ) ? this._data.size : this._data.length;
-    	let i = this._headerOffset;
-    	let p = 0;
+		let bytesXelem = Math.abs(this._bitpix / 8);
+		let length = this.u8data.byteLength / bytesXelem;
+		// let length = this.u8data.byteLength / 2;
 
-    	let val;
 
-    	
-    	
+
     	let  min2bChecked = false;
     	let  max2bChecked = false;
-    	let p_val;
     	
-    	if (isNaN(this._PVMIN_orig)){
-    		min2bChecked = true;
-    	}
-    	if (isNaN(this._PVMAX_orig)){
-    		max2bChecked = true;
-    	}
-    	
-    	if (in_min != null){
-    		this._PVMIN = in_min;
-    	}else if (isNaN(this._PVMIN_orig)){
-    		p_val = this.getPhysicalNumber(i);
-    		this._PVMIN = p_val;
-    	}else {
-    		this._PVMIN = this._PVMIN_orig;
-    	}
-    	
-    	if (in_max != null){
-    		this._PVMAX = in_max;
-    	}else if (isNaN(this._PVMAX_orig)){
-    		p_val = this.getPhysicalNumber(i);
-    		this._PVMAX = p_val;
-    	}else {
-    		this._PVMAX = this._PVMAX_orig;
-    	}
+		if (isNaN(this._PVMIN_orig)){
+			min2bChecked = true;
+		}
+		if (isNaN(this._PVMAX_orig)){
+			max2bChecked = true;
+		}
 
+		px_val = undefined;
+		px_val = this.extractPixelValue(0);
+
+		if (px_val !== undefined){
+			ph_val = this.pixel2physicalValue(px_val);
+		} else {
+			throw new ErrorEvent("pixel value undefined");
+		}
+			
+
+		if (in_min != null){
+			this._PVMIN = in_min;
+		}else if (isNaN(this._PVMIN_orig)){
+			this._PVMIN = ph_val;
+		}else {
+			this._PVMIN = this._PVMIN_orig;
+		}
+
+		if (in_max != null){
+			this._PVMAX = in_max;
+		}else if (isNaN(this._PVMAX_orig)){
+			this._PVMAX = ph_val;
+		}else {
+			this._PVMAX = this._PVMAX_orig;
+		}
+
+		
+		let p = 0;
 		while (i < length){
 			
-			let p_val = this.getPhysicalNumber(i);			
+			// px_val = ParseUtils.test16bit2complements(this.u8data[2*i], this.u8data[2*i+1]);
+			// ph_val = this._header.getValue("BZERO") + this._header.getValue("BSCALE") * px_val;
 			
-			if( min2bChecked && p_val < this._PVMIN && p_val > Number.MIN_VALUE) {
-				this._PVMIN = p_val;
+			px_val = this.extractPixelValue(bytesXelem*i);
+			ph_val = this.pixel2physicalValue(px_val);
+
+
+			if( min2bChecked && ph_val < this._PVMIN && ph_val > Number.MIN_VALUE) {
+				this._PVMIN = ph_val;
 			}
 
-			if(max2bChecked && p_val > this._PVMAX && p_val < Number.MAX_VALUE) {
-				this._PVMAX = p_val;
+			if(max2bChecked && ph_val > this._PVMAX && ph_val < Number.MAX_VALUE) {
+				this._PVMAX = ph_val;
 			}
 
 			
-			if( p_val > Number.MIN_VALUE && p_val >= this._PVMIN && p_val <= this._PVMAX) {
-				this._physicalValues[p++] = p_val;
+			if( ph_val > Number.MIN_VALUE && ph_val >= this._PVMIN && ph_val <= this._PVMAX) {
+				this._physicalValues[p++] = ph_val;
 			}
 			else{
 				this._physicalValues[p++] = "NaN";	
-			} 
-
-			i += Math.abs(this._header.getValue("BITPIX")/8);
+			}
+			i++;
 		}
 		
 		if (this.firstRun){
@@ -191,24 +200,42 @@ class ParsePayload{
 		}
 		
 	}
-	
-	inspectParsedData () {
-			let str = "";
-			for ( let i = 0; i< 512; i++) {
-				str += i+") "+this._physicalValues[i]+" | ";
-			}
-			console.log(str);
+
+	pixel2physicalValue (pxval) {
+		return this._header.getValue("BZERO") + this._header.getValue("BSCALE") * pxval;
 	}
+	
+	extractPixelValue(offset) {
 
+		let px_val = undefined; // pixel value
+		if (this._bitpix == 16) { // 16-bit 2's complement binary integer
+			px_val = ParseUtils.parse16bit2sComplement(this.u8data[offset], this.u8data[offset+1]);
+		} else if (this._header.getValue("BITPIX") == 32) { // IEEE 754 half precision (float16) ?? 
+			px_val = ParseUtils.parse32bit2sComplement(this.u8data[offset], this.u8data[offset+1], this.u8data[offset+2], this.u8data[offset+3]); 
+		} else if (this._bitpix == -32) { // 32-bit IEEE single-precision floating point
 
-	inspectScaledData () {
-		let str = "";
-		for ( let i = 0; i< 512; i++) {
-			str += this._tfPhysicalValues[i]+" | ";
+			// let p = new Float32Array(this.u8data.buffer, offset*4);
+
+			px_val = ParseUtils.parse32bitSinglePrecisionFloatingPoint (this.u8data[offset], this.u8data[offset+1], this.u8data[offset+2], this.u8data[offset+3]); 
+			// if (px_val != 0){
+			// 	// long to float conversion
+			// 	px_val = (1.0+((px_val&0x007fffff)/0x0800000)) * Math.pow(2,((px_val&0x7f800000)>>23) - 127); 
+			// }
+		} else if (this._bitpix == 64) { // 64-bit 2's complement binary integer 
+			throw new TypeError("BITPIX=64 -> 64-bit 2's complement binary integer NOT supported yet.");
+		} else if (this._bitpix == -64) { // 64-bit IEEE double-precision floating point 
+			throw new TypeError("BITPIX=-64 -> IEEE double-precision floating point NOT supported yet.");
 		}
-		console.log(str);
+
+		// if (px_val !== undefined){
+		// 	ph_val = this._header.getValue("BZERO") + this._header.getValue("BSCALE") * px_val;
+		// } else {
+		// 	throw new ErrorEvent("pixel value undefined");
+		// }
+		return px_val;
 	}
-	
+
+
 	getPhysicalValue(value) {
 
 		let val;
@@ -272,10 +299,10 @@ class ParsePayload{
 			}
 			
 		}
-    	if (this.f < 512){
-    		this.values[this.f] = val;
-    		this.f++;
-    	}
+    	// if (this.f < 512){
+    	// 	this.values[this.f] = val;
+    	// 	this.f++;
+    	// }
     	// STSCI standard: physical_value = BZERO + BSCALE * array_value;
     	let p_val = this._header.getValue("BZERO") + this._header.getValue("BSCALE") * val;
     	return p_val;
@@ -435,25 +462,19 @@ class ParsePayload{
 	}
 
 	getPixelValueFromScreenMouse(i, j){
-				
+
+		let arr = undefined;
 		let idx =   ( (this._header.getValue("NAXIS2")-j-1) * this._header.getValue("NAXIS1") ) + (i-1) ;
-
-		// let byte1 = ParseUtils.getByteAt(this._data, this._headerOffset + idx);
-		// let byte2 = ParseUtils.getByteAt(this._data, this._headerOffset + idx + 1);
-		// let h = 0x0000 | (byte1 << 8) | byte2;
-		// // return h;
+		if (this._bitpix == 16) {
+			// return [this.u8data[2*idx], this.u8data[2*idx+1]];
+			arr = this.u8data.slice(2*idx, 2*idx+1);
+		} else if (this._bitpix == 32 || this._bitpix == -32) {
+			arr = this.u8data.slice(4*idx, 4*idx+3);
+		} else if (this._bitpix == 64 || this._bitpix == -64) {
+			arr = this.u8data.slice(8*idx, 8*idx+7);
+		}
+		return arr;
 		
-		// let s = (h & 0x8000) >> 15;
-		// let res = h & 0x0000FFFF;
-	    
-	    // if (s){
-	    // 	res = (~h & 0x0000FFFF)  + 1;
-	    // 	return -1 * res;
-	    // }
-	    // return res;
-
-		return this._data[idx];
-		// return ParseUtils.parse16bit2sComplement(this._data, idx, true); 
 	}
 }
 

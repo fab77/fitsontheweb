@@ -23,20 +23,24 @@ class ParseUtils {
 		return chars.join("");
 	}
 	
-	static parse32bitSinglePrecisionFloatingPoint (data, offset) {
-		var byte1 = ParseUtils.getByteAt(data, offset);
-		let byte2 = ParseUtils.getByteAt(data, offset + 1);
-		let byte3 = ParseUtils.getByteAt(data, offset + 2);
-		let byte4 = ParseUtils.getByteAt(data, offset + 3);
+	// static parse32bitSinglePrecisionFloatingPoint (data, offset) {
+	// 	var byte1 = ParseUtils.getByteAt(data, offset);
+	// 	let byte2 = ParseUtils.getByteAt(data, offset + 1);
+	// 	let byte3 = ParseUtils.getByteAt(data, offset + 2);
+	// 	let byte4 = ParseUtils.getByteAt(data, offset + 3);
 		
+	// 	let long = (((((byte1 << 8) + byte2) << 8) + byte3) << 8) + byte4;
+	// 	if (long < 0) long += 4294967296;
+
+
+	// 	return long;
+	// }
+
+	static parse32bitSinglePrecisionFloatingPoint (byte1, byte2, byte3, byte4) {
 		let long = (((((byte1 << 8) + byte2) << 8) + byte3) << 8) + byte4;
 		if (long < 0) long += 4294967296;
-		
-//		if (byte1 !== 192 && byte2 !== 0 && byte3 !== 0 && byte4 !== 127){
-//			check = true;
-//		}
-
-		return long;
+		let float = (1.0+((long&0x007fffff)/0x0800000)) * Math.pow(2,((long&0x7f800000)>>23) - 127);
+		return float;
 	}
 	
 	
@@ -44,46 +48,68 @@ class ParseUtils {
 		throw new TypeError("not implemented yet");
 	}
 	
-	static parse16bit2sComplement(data, offset) {
-		let byte1 = ParseUtils.getByteAt(data, offset);
-		let byte2 = ParseUtils.getByteAt(data, offset + 1);
-		let h = 0x0000 | (byte1 << 8) | byte2;
-		
-		let s = (h & 0x8000) >> 15;
-		let e = (h & 0x7C00) >> 10;
-		let f = h & 0x03FF; // non usato ma forse va cambiato in 0x07FF
+	static parse16bit2sComplement(byte1, byte2) {
+		let unsigned = (byte1 << 8) | byte2;
+		if ( unsigned & 0x8000) {
+			return unsigned | 0xffff0000;
+		} else {
+			return unsigned;
+		}
+	}
 
-		let res = h & 0x0000FFFF;
+	// static parse16bit2sComplement(data, offset) {
+	// 	let byte1 = ParseUtils.getByteAt(data, offset);
+	// 	let byte2 = ParseUtils.getByteAt(data, offset + 1);
+	// 	let h = 0x0000 | (byte1 << 8) | byte2;
+		
+	// 	let s = (h & 0x8000) >> 15;
+	// 	let e = (h & 0x7C00) >> 10;
+	// 	let f = h & 0x03FF; // non usato ma forse va cambiato in 0x07FF
+
+	// 	let res = h & 0x0000FFFF;
+	    
+	//     if (s){
+	//     	res = (~h & 0x0000FFFF)  + 1;
+	//     	return -1 * res;
+	//     }
+	//     return res;
+
+	// }
+
+	static parse32bit2sComplement(byte1, byte2, byte3, byte4) {
+		let unsigned = (byte1 << 24) | (byte2 << 16) | (byte3 << 8) | byte4;
+		let s = (unsigned & 0x80000000) >> 31;
+		let res = unsigned & 0xFFFFFFFF;
 	    
 	    if (s){
-	    	res = (~h & 0x0000FFFF)  + 1;
+	    	res = (~unsigned & 0xFFFFFFFF) + 1;
 	    	return -1 * res;
 	    }
 	    return res;
-
 	}
 
-	static parse32bit2sComplement(data, offset) {
-		let byte1 = ParseUtils.getByteAt(data, offset);
-		let byte2 = ParseUtils.getByteAt(data, offset + 1);
-		let byte3 = ParseUtils.getByteAt(data, offset + 2);
-		let byte4 = ParseUtils.getByteAt(data, offset + 3);
-		
-		let h = (byte1 << 24) | (byte2 << 16) | (byte3 << 8) | byte4;
-		
-		let s = (h & 0x80000000) >> 31;
-		let e = (h & 0x7FC00000) >> 23;
-		let f =  h & 0x007FFFFF;
 
-		let res = h & 0xFFFFFFFF;
+	// static parse32bit2sComplement(data, offset) {
+	// 	let byte1 = ParseUtils.getByteAt(data, offset);
+	// 	let byte2 = ParseUtils.getByteAt(data, offset + 1);
+	// 	let byte3 = ParseUtils.getByteAt(data, offset + 2);
+	// 	let byte4 = ParseUtils.getByteAt(data, offset + 3);
+		
+	// 	let h = (byte1 << 24) | (byte2 << 16) | (byte3 << 8) | byte4;
+		
+	// 	let s = (h & 0x80000000) >> 31;
+	// 	let e = (h & 0x7FC00000) >> 23;
+	// 	let f =  h & 0x007FFFFF;
+
+	// 	let res = h & 0xFFFFFFFF;
 	    
-	    if (s){
-	    	res = (~h & 0xFFFFFFFF)  + 1;
-	    	return -1 * res;
-	    }
-	    return res;
+	//     if (s){
+	//     	res = (~h & 0xFFFFFFFF)  + 1;
+	//     	return -1 * res;
+	//     }
+	//     return res;
 
-	}
+	// }
 	
 	/**
 	 * 

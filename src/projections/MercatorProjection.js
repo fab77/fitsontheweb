@@ -27,7 +27,7 @@ class MercatorProjection extends AbstractProjection {
 
     constructor (minra, mindec, deltara, deltadec, fotw) {
         super();
-        this._scale = 20;
+        this._scale = 200;
         this._deltara = deltara;
         this._deltadec = deltadec;
         this._minra = minra;
@@ -40,9 +40,10 @@ class MercatorProjection extends AbstractProjection {
 		this._np1 = this._scale * Math.abs(ij1[0] - ij2[0]);
 		console.debug("[cutout np1]: "+this._np1);
 		this._stepra = Math.abs(this._minra + this._deltara - this._minra) / this._np1;
-		let ij3 = this._fotw.computeFITSij(this._minra, this._mindec);
+
+		// let ij3 = this._fotw.computeFITSij(this._minra, this._mindec);
 		let ij4 = this._fotw.computeFITSij(this._minra, this._mindec + this._deltadec);
-		this._np2 = this._scale * Math.abs(ij3[1] - ij4[1]);
+		this._np2 = this._scale * Math.abs(ij1[1] - ij4[1]);
 		this._stepdec = Math.abs(this._mindec + this._deltadec - this._mindec) / this._np2;
 		console.debug("[cutout np2]: " + this._np2);
 
@@ -74,41 +75,18 @@ class MercatorProjection extends AbstractProjection {
         let radec;  // double array of degrees
         let data = new Uint8Array(2 * this._np1 * this._np2);
         let idx = 0;
+        for (let j = 0; j < this._np2; j++) {
         for (let i = 0; i < this._np1; i++) {
             
-            for (let j = 0; j < this._np2; j++) {
                 
                 radec = this.pix2world(i, j);
 
                 // retrieving pixel raw value from the original file using the original projection
                 let origProj_ij = this._fotw.computeFITSij(radec[0], radec[1]);
                 let pxval = this._fotw.getPixelValueFromScreenMouse(origProj_ij[0], origProj_ij[1]);
-                // taking the only the 4th and 3rd bytes
-                // let byte4 = (pxval & 0x000000FF) ;
-                // let byte3 = (pxval & 0x0000FF00)>>8;
-
-
-                // let byte1 = (pxval[0] & 0xFF000000) >> 24;
-                // let byte2 = (pxval[0] & 0x00FF0000) >> 16;
-                // let byte3 = (pxval[0] & 0x0000FF00) >> 8;
-                // let byte4 = (pxval[0] & 0x000000FF);
-                // let str = pxval[0] + pxval[1];
-                // let byte11 = ParseUtils.getByteAt(str, 0);
-                // let byte12 = ParseUtils.getByteAt(str, 1);
-                // console.log(str.toString(2));
                 
-                // console.log(byte12.toString(2));
-                // let tmp = 1.2179013843831301 + 0.00012976993255276655 * pxval;
-                // let test1 = (new TextEncoder().encode(pxval)).length;
-                // console.log((new TextEncoder().encode(pxval)));
-                // console.log(((new TextEncoder().encode(pxval)) >>> 0).toString(2));
-                
-                // let tmp = parseInt((new TextEncoder().encode(pxval)));
-                // console.log((tmp >>> 0).toString(2));
-
-                idx = 2 * ( (this._np2 * i) + j );
-                data[idx] = (new TextEncoder().encode(pxval))[0];
-                data[idx+1] = (new TextEncoder().encode(pxval))[1];
+                data[idx++] = pxval[0];
+                data[idx++] = pxval[1];
 
             }
         }

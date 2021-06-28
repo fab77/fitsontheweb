@@ -29,7 +29,7 @@ import ParseUtils from './ParseUtils';
  * 
  * BITPIX definition from https://archive.stsci.edu/fits/fits_standard/node39.html
  * 8	Character or unsigned binary integer
- * 16	16-bit twos-complement binary integer
+ * 16	16-bit twos-complement binary integer	e.g. http://skies.esac.esa.int/Herschel/normalized/hips250_pnorm_allsky/Norder3/Dir0/Npix281.fits
  * 32	32-bit twos-complement binary integer
  * -32	IEEE single precision floating point
  * -64	IEEE double precision floating point
@@ -54,6 +54,8 @@ class FITSOnTheWeb {
 	_callback;
 	_xyGridProj;
 	_encodedFitsData;
+	_fitsWidth;
+	_fitsHeight;
 
 	/**
 	 * @param url: FITS HTTP URL
@@ -71,7 +73,7 @@ class FITSOnTheWeb {
 		this._colorMap = in_colorMap;
 		this._tFunction = in_tFunction;
 		
-		var self = this;
+		// var self = this;
 
 		if (this._url !== undefined && this._url != null){
 			let fitsLoader = new FitsLoader(this._url, null, this);
@@ -114,6 +116,8 @@ class FITSOnTheWeb {
 	processFits (data) {
 
 		let parseHeader = new ParseHeader(data);
+		this._fitsWidth = parseHeader.width;
+		this._fitsHeight = parseHeader.height;
 		this._header = parseHeader.header;
 		let headerOffset = parseHeader.offset;
 
@@ -259,7 +263,15 @@ class FITSOnTheWeb {
 	 */
 	getFacetProjectedCoordinates (nside) {
 		nside = (nside !== undefined) ? nside : Math.pow(2, this._header.getValue('ORDER'));
+		// nside = 3;
+		if (isNaN(nside)){
+			throw new EvalError("nside not set");
+		}
 		let pix = this._header.getValue('NPIX');
+
+		// pix =281;
+
+
 		let healpix = new Healpix(nside);
 		let cornersVec3 = healpix.getBoundariesWithStep(pix, 1);
 		let pointings = [];
@@ -499,20 +511,6 @@ class FITSOnTheWeb {
 		return fitsURL;
 	}
 
-	getRAStep () {
-
-	}
-
-	getDecStep () {
-
-	}
-
-
-	getXDelta (raDeg, deltaRa) {
-
-	}
-
-
 	/**
 	 * 
 	 * @param {*} centerRa degrees
@@ -529,6 +527,15 @@ class FITSOnTheWeb {
 		// 	compute pix_value using HEALPix projection above
 		// save to the payload of the resulting FITS
 
+	}
+
+	getFITSwidth () {
+		return this._fitsWidth;
+	}
+
+
+	getFITSheight () {
+		return this._fitsHeight;
 	}
 
 }

@@ -121,6 +121,15 @@ class FITSWriter {
 
         // this._payloadArray = new Uint8Array(arrayData.buffer, 0, arrayData.byteLength);
         this._payloadArray = arrayData;
+        // TODO TEST!!! Iterate over byte 2 by 2 and apply the 3's bit complement conversion:
+        //  - first byte inverted ( invert all bits)
+        //  - second byte inverted and added by 1 at the LSB
+        // https://www.tutorialspoint.com/two-s-complement
+        // Store the result in a buffer array Uint8 or directly in an arraybuffer of bytes and in the Blob at the end
+        
+
+
+
         
     }
 
@@ -135,9 +144,22 @@ class FITSWriter {
         console.debug("this._headerArray.byteLength "+this._headerArray.byteLength);
         console.debug("this._headerArray.length "+this._headerArray.length);
         let bytes = new Uint8Array(this._headerArray.length + this._payloadArray.length);
+        // let bytes = new Int16Array(this._headerArray.length + this._payloadArray.length);
+
         bytes.set(this._headerArray, 0);
         bytes.set(this._payloadArray, this._headerArray.length);
-        this._fitsData = bytes;
+
+        console.log(bytes[this._headerArray.length] +" - "+ bytes[this._headerArray.length].toString(2));
+        console.log(bytes[this._headerArray.length+1] +" - "+ bytes[this._headerArray.length+1].toString(2));
+        console.log(bytes[this._headerArray.length+2] +" - "+ bytes[this._headerArray.length+2].toString(2));
+        console.log(bytes[this._headerArray.length+3] +" - "+ bytes[this._headerArray.length+3].toString(2));
+
+        let test = new Uint16Array(bytes.buffer);
+
+        console.log(test[this._headerArray.length/2]+" - "+test[this._headerArray.length].toString(2));
+        console.log(test[this._headerArray.length/2+1]+" - "+test[this._headerArray.length+1].toString(2));
+
+        this._fitsData = test;
     }
 
     typedArrayToURL() {
