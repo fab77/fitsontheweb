@@ -149,17 +149,10 @@ class FITSWriter {
         bytes.set(this._headerArray, 0);
         bytes.set(this._payloadArray, this._headerArray.length);
 
-        console.log(bytes[this._headerArray.length] +" - "+ bytes[this._headerArray.length].toString(2));
-        console.log(bytes[this._headerArray.length+1] +" - "+ bytes[this._headerArray.length+1].toString(2));
-        console.log(bytes[this._headerArray.length+2] +" - "+ bytes[this._headerArray.length+2].toString(2));
-        console.log(bytes[this._headerArray.length+3] +" - "+ bytes[this._headerArray.length+3].toString(2));
-
         let test = new Uint16Array(bytes.buffer);
 
-        console.log(test[this._headerArray.length/2]+" - "+test[this._headerArray.length].toString(2));
-        console.log(test[this._headerArray.length/2+1]+" - "+test[this._headerArray.length+1].toString(2));
-
-        this._fitsData = test;
+        // this._fitsData = test;
+        this._fitsData = bytes;
     }
 
     typedArrayToURL() {

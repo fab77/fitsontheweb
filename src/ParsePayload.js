@@ -164,12 +164,8 @@ class ParsePayload{
 		let p = 0;
 		while (i < length){
 			
-			// px_val = ParseUtils.test16bit2complements(this.u8data[2*i], this.u8data[2*i+1]);
-			// ph_val = this._header.getValue("BZERO") + this._header.getValue("BSCALE") * px_val;
-			
 			px_val = this.extractPixelValue(bytesXelem*i);
 			ph_val = this.pixel2physicalValue(px_val);
-
 
 			if( min2bChecked && ph_val < this._PVMIN && ph_val > Number.MIN_VALUE) {
 				this._PVMIN = ph_val;
@@ -178,7 +174,6 @@ class ParsePayload{
 			if(max2bChecked && ph_val > this._PVMAX && ph_val < Number.MAX_VALUE) {
 				this._PVMAX = ph_val;
 			}
-
 			
 			if( ph_val > Number.MIN_VALUE && ph_val >= this._PVMIN && ph_val <= this._PVMAX) {
 				this._physicalValues[p++] = ph_val;
@@ -227,86 +222,81 @@ class ParsePayload{
 			throw new TypeError("BITPIX=-64 -> IEEE double-precision floating point NOT supported yet.");
 		}
 
-		// if (px_val !== undefined){
-		// 	ph_val = this._header.getValue("BZERO") + this._header.getValue("BSCALE") * px_val;
-		// } else {
-		// 	throw new ErrorEvent("pixel value undefined");
-		// }
 		return px_val;
 	}
 
 
-	getPhysicalValue(value) {
+	// getPhysicalValue(value) {
 
-		let val;
-		// 16-bit 2's complement binary integer
-    	if (this._header.getValue("BITPIX") == 16) { 
-    		// IEEE 754 half precision (float16)
-    		val = ParseUtils.parse16bit2sComplement(value, 0, true); 
+	// 	let val;
+	// 	// 16-bit 2's complement binary integer
+    // 	if (this._header.getValue("BITPIX") == 16) { 
+    // 		// IEEE 754 half precision (float16)
+    // 		val = ParseUtils.parse16bit2sComplement(value, 0, true); 
 
-		// 32-bit 2's complement binary integer 
-    	} else if (this._header.getValue("BITPIX") == 32) { 
-			// IEEE 754 half precision (float16) ?? 
-			val = ParseUtils.parse32bit2sComplement(value, 0, true); 
+	// 	// 32-bit 2's complement binary integer 
+    // 	} else if (this._header.getValue("BITPIX") == 32) { 
+	// 		// IEEE 754 half precision (float16) ?? 
+	// 		val = ParseUtils.parse32bit2sComplement(value, 0, true); 
 		
-		// 32-bit IEEE single-precision floating point
-		} else if (this._header.getValue("BITPIX") == -32) {	
-			// IEEE 754 float32 is always big-endian
-			val = ParseUtils.parse32bitSinglePrecisionFloatingPoint (value, 0, true); 
-			if (val != 0){
-				// long to float conversion
-				val = (1.0+((val&0x007fffff)/0x0800000)) * Math.pow(2,((val&0x7f800000)>>23) - 127); 
-			}
-		// 64-bit 2's complement binary integer 
-		} else if (this._header.getValue("BITPIX") == 64) {
-			throw new TypeError("BITPIX=64 -> 64-bit 2's complement binary integer NOT supported yet.");
-		// 64-bit IEEE double-precision floating point 
-		} else if (this._header.getValue("BITPIX") == -64) {
-			throw new TypeError("BITPIX=-64 -> IEEE double-precision floating point NOT supported yet.");
-		// 64-bit IEEE double-precision floating point 
-		} else if (this._header.getValue("BITPIX") == -64) {
-			throw new TypeError("BITPIX=-64 -> IEEE double-precision floating point NOT supported yet.");
-		}
+	// 	// 32-bit IEEE single-precision floating point
+	// 	} else if (this._header.getValue("BITPIX") == -32) {	
+	// 		// IEEE 754 float32 is always big-endian
+	// 		val = ParseUtils.parse32bitSinglePrecisionFloatingPoint (value, 0, true); 
+	// 		if (val != 0){
+	// 			// long to float conversion
+	// 			val = (1.0+((val&0x007fffff)/0x0800000)) * Math.pow(2,((val&0x7f800000)>>23) - 127); 
+	// 		}
+	// 	// 64-bit 2's complement binary integer 
+	// 	} else if (this._header.getValue("BITPIX") == 64) {
+	// 		throw new TypeError("BITPIX=64 -> 64-bit 2's complement binary integer NOT supported yet.");
+	// 	// 64-bit IEEE double-precision floating point 
+	// 	} else if (this._header.getValue("BITPIX") == -64) {
+	// 		throw new TypeError("BITPIX=-64 -> IEEE double-precision floating point NOT supported yet.");
+	// 	// 64-bit IEEE double-precision floating point 
+	// 	} else if (this._header.getValue("BITPIX") == -64) {
+	// 		throw new TypeError("BITPIX=-64 -> IEEE double-precision floating point NOT supported yet.");
+	// 	}
 		
 
     
-    	// STSCI standard: physical_value = BZERO + BSCALE * array_value;
-    	let p_val = this._header.getValue("BZERO") + this._header.getValue("BSCALE") * val;
-    	return p_val;
-	}
+    // 	// STSCI standard: physical_value = BZERO + BSCALE * array_value;
+    // 	let p_val = this._header.getValue("BZERO") + this._header.getValue("BSCALE") * val;
+    // 	return p_val;
+	// }
 	
 	
-	getPhysicalNumber (idx){
+	// getPhysicalNumber (idx){
 		
-		let val;
-		// 16-bit 2's complement binary integer (BITPIX 16)
-    	if (this._header.getValue("BITPIX") == 16){ 
-    		// IEEE 754 half precision (float16)
-    		val = ParseUtils.parse16bit2sComplement(this._data, idx, true); 
+	// 	let val;
+	// 	// 16-bit 2's complement binary integer (BITPIX 16)
+    // 	if (this._header.getValue("BITPIX") == 16){ 
+    // 		// IEEE 754 half precision (float16)
+    // 		val = ParseUtils.parse16bit2sComplement(this._data, idx, true); 
 		
-		// 16-bit 2's complement binary integer (BITPIX 32)
-    	}else if (this._header.getValue("BITPIX") == 32){ 
-			// IEEE 754 half precision (float16)
-			val = ParseUtils.parse32bit2sComplement(this._data, idx, true); 
+	// 	// 16-bit 2's complement binary integer (BITPIX 32)
+    // 	}else if (this._header.getValue("BITPIX") == 32){ 
+	// 		// IEEE 754 half precision (float16)
+	// 		val = ParseUtils.parse32bit2sComplement(this._data, idx, true); 
 			
-		// 32 bit single precision (BITPIX -32)
-		}else if (this._header.getValue("BITPIX") == -32){	
-			// IEEE 754 float32 is always big-endian
-			val = ParseUtils.parse32bitSinglePrecisionFloatingPoint (this._data, idx, true); 
-			if (val != 0){
-				// long to float conversion
-				val = (1.0+((val&0x007fffff)/0x0800000)) * Math.pow(2,((val&0x7f800000)>>23) - 127);
-			}
+	// 	// 32 bit single precision (BITPIX -32)
+	// 	}else if (this._header.getValue("BITPIX") == -32){	
+	// 		// IEEE 754 float32 is always big-endian
+	// 		val = ParseUtils.parse32bitSinglePrecisionFloatingPoint (this._data, idx, true); 
+	// 		if (val != 0){
+	// 			// long to float conversion
+	// 			val = (1.0+((val&0x007fffff)/0x0800000)) * Math.pow(2,((val&0x7f800000)>>23) - 127);
+	// 		}
 			
-		}
-    	// if (this.f < 512){
-    	// 	this.values[this.f] = val;
-    	// 	this.f++;
-    	// }
-    	// STSCI standard: physical_value = BZERO + BSCALE * array_value;
-    	let p_val = this._header.getValue("BZERO") + this._header.getValue("BSCALE") * val;
-    	return p_val;
-	}
+	// 	}
+    // 	// if (this.f < 512){
+    // 	// 	this.values[this.f] = val;
+    // 	// 	this.f++;
+    // 	// }
+    // 	// STSCI standard: physical_value = BZERO + BSCALE * array_value;
+    // 	let p_val = this._header.getValue("BZERO") + this._header.getValue("BSCALE") * val;
+    // 	return p_val;
+	// }
 	
 	applyScaleFunction (scaleFunction) {
 		
@@ -467,11 +457,11 @@ class ParsePayload{
 		let idx =   ( (this._header.getValue("NAXIS2")-j-1) * this._header.getValue("NAXIS1") ) + (i-1) ;
 		if (this._bitpix == 16) {
 			// return [this.u8data[2*idx], this.u8data[2*idx+1]];
-			arr = this.u8data.slice(2*idx, 2*idx+1);
+			arr = this.u8data.slice(2*idx, 2*idx+2);
 		} else if (this._bitpix == 32 || this._bitpix == -32) {
-			arr = this.u8data.slice(4*idx, 4*idx+3);
+			arr = this.u8data.slice(4*idx, 4*idx+4);
 		} else if (this._bitpix == 64 || this._bitpix == -64) {
-			arr = this.u8data.slice(8*idx, 8*idx+7);
+			arr = this.u8data.slice(8*idx, 8*idx+8);
 		}
 		return arr;
 		

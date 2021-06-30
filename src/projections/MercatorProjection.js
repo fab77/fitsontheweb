@@ -65,9 +65,7 @@ class MercatorProjection extends AbstractProjection {
      * @param {*} decdeg
      *  
      */
-    world2pix (radeg, decdeg) {
-        
-    }
+    world2pix (radeg, decdeg) {}
 
 
     generateMatrix () {
@@ -76,7 +74,7 @@ class MercatorProjection extends AbstractProjection {
         let data = new Uint8Array(2 * this._np1 * this._np2);
         let idx = 0;
         for (let j = 0; j < this._np2; j++) {
-        for (let i = 0; i < this._np1; i++) {
+            for (let i = 0; i < this._np1; i++) {
             
                 
                 radec = this.pix2world(i, j);
@@ -84,10 +82,15 @@ class MercatorProjection extends AbstractProjection {
                 // retrieving pixel raw value from the original file using the original projection
                 let origProj_ij = this._fotw.computeFITSij(radec[0], radec[1]);
                 let pxval = this._fotw.getPixelValueFromScreenMouse(origProj_ij[0], origProj_ij[1]);
+                if (j==0 && i <10){
+                    console.log("pxval "+pxval[0].toString(2)+" "+pxval[1].toString(2));
+                }
                 
                 data[idx++] = pxval[0];
                 data[idx++] = pxval[1];
-
+                if (j==0 && i <10){
+                    console.log("data "+data[idx-2].toString(2)+" "+data[idx-1].toString(2));
+                }
             }
         }
 

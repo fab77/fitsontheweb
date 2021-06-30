@@ -231,8 +231,15 @@ class Presenter {
 		
 		$("img").mousemove(function (e) {
 	
+
+
+
 			let x = e.pageX - this.offsetLeft;
 	        let y = e.pageY - this.offsetTop;
+
+			
+			// let x = 446;
+	        // let y = 239;
 	        
 			let imgWidth = presenter._fOTW.getFITSwidth();
 			let imgHeight = presenter._fOTW.getFITSheight();
