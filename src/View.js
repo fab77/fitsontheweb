@@ -258,12 +258,14 @@ class View{
 			console.log($("#stepra").val());
 			console.log($("#mindec").val());
 			console.log($("#stepdec").val());
+			console.log($("#projection option:selected" ).text());
 
 			let minra = parseFloat($("#minra").val());
 			let stepra = parseFloat($("#stepra").val());
 			let mindec = parseFloat($("#mindec").val());
 			let stepdec = parseFloat($("#stepdec").val());
-			handler(minra, stepra, mindec, stepdec);
+			let proj = $("#projection option:selected" ).text();
+			handler(minra, stepra, mindec, stepdec, proj);
 		});
 	}
 
@@ -469,28 +471,13 @@ class View{
 				"		<input type='text' name='mindec' id='mindec' value='0.36' placeholder='-- Dec degrees --'/>" +
 				"		<label for='stepdec'>step Dec:</label>" +
 				"		<input type='text' name='stepdec' id='stepdec' value='0.52' placeholder='-- Dec degrees --'/>" +
+				"		<select id='projection' name='projection'><option value='mercator'>mercator</option></select>" +
 				"		<input type='button' name='computeCutout' id='computeCutout'  value='go'/>" +
 				"	</div>";
 		return html;
 	}
 
-	// initCutout() {
-		
-	// 	let html = "<div id='cutoutContainer'>" +
-	// 			"		<center>FITS cut-out</center>" +
-	// 			"		<label for='minra'>min RA (J2000):</label>" +
-	// 			"		<input type='text' name='minra' id='minra' value='0.21423' placeholder='-- RA degrees --'/>" +
-	// 			"		<label for='stepra'>step RA:</label>" +
-	// 			"		<input type='text' name='stepra' id='stepra' value='0.05' placeholder='-- RA degrees --'/>" +
-
-	// 			"		<label for='mindec'>Dec (J2000):</label>" +
-	// 			"		<input type='text' name='mindec' id='mindec' value='-0.88595' placeholder='-- Dec degrees --'/>" +
-	// 			"		<label for='stepdec'>step Dec:</label>" +
-	// 			"		<input type='text' name='stepdec' id='stepdec' value='0.3' placeholder='-- Dec degrees --'/>" +
-	// 			"		<input type='button' name='computeCutout' id='computeCutout'  value='go'/>" +
-	// 			"	</div>";
-	// 	return html;
-	// }
+	
 
 	addDownload (fitsUrl) {
 		let a = document.createElement('a');

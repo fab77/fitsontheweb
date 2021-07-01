@@ -10,13 +10,13 @@
 
 class AbstractProjection {
 
-    constructor(minra, mindec, deltara, deltadec, fotw){
+    constructor(){
 
         if (new.target === AbstractProjection) {
             throw new TypeError("Abstract class cannot be instantiated.");
         }
 
-        if (this.generateMatrix === undefined) {
+        if (this.generatePxMatrix === undefined) {
             throw new TypeError("Must override generateMatrix()");
         }
 

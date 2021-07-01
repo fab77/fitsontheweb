@@ -1,6 +1,7 @@
 
 import View from './View';
 import FITSOnTheWeb from './FITSOnTheWeb';
+import {constants} from './Constants';
 
 class Presenter {
 	
@@ -210,17 +211,17 @@ class Presenter {
 		this._view.addRADecHandler(function (radeg, decdeg) {
 
 			console.log("addRADecHandler");
-			let ij = self._fOTW.computeFITSij(radeg, decdeg);
-			self._view.setImageCoords(ij[0], ij[1]);
+			let ij = self._fOTW.computeFITSij2(radeg, decdeg);
+			self._view.setImageCoords(ij[0], 512 - ij[1]);
 			let pval = self._fOTW.getPhysicalPixelValueFromScreenMouse(ij[0], ij[1]);
 			self._view.setPhysicalValue2(pval);
 		});
 
 
-		this._view.addCutoutHandler(function (radeg, rastep, decdeg, decstep) {
+		this._view.addCutoutHandler(function (radeg, rastep, decdeg, decstep, projectionName) {
 
-			console.log("addCutoutHandler");
-			let fitsUrl = self._fOTW.cutOutByBox(radeg, rastep, decdeg, decstep);
+			// let fitsUrl = self._fOTW.cutOutByBox(radeg, rastep, decdeg, decstep, constants.PROJECTIONS.MERCATOR);
+			let fitsUrl = self._fOTW.cutOutByBox(radeg, rastep, decdeg, decstep, projectionName);
 			self._view.addDownload(fitsUrl);
 		});
 
@@ -230,9 +231,6 @@ class Presenter {
 	addEventListener (presenter) {
 		
 		$("img").mousemove(function (e) {
-	
-
-
 
 			let x = e.pageX - this.offsetLeft;
 	        let y = e.pageY - this.offsetTop;
@@ -247,16 +245,16 @@ class Presenter {
 			if (x <= imgWidth && y <= imgHeight){
 				let p_value = presenter._fOTW.getPhysicalPixelValueFromScreenMouse(x, y);
 				presenter._view.setPhysicalValue(p_value);
-				let coords = presenter._fOTW.getAstroCoordinatesFromFITS(x, imgHeight - y);
+				let coords = presenter._fOTW.getAstroCoordinatesFromFITS2(x, imgHeight - y);
 				presenter._view.setRADecValue (coords.skyCoords[0], coords.skyCoords[1]);
 				presenter._view.setXYValue (coords.xyCoords[0], coords.xyCoords[1]);
 				presenter._view.setFITSxyValue (x, imgHeight - y);
 				
 				
-				let ij = presenter._fOTW.computeFITSij(coords.skyCoords[0], coords.skyCoords[1]);
-				presenter._view.setImageCoords(ij[0], ij[1]);
-				let pval = presenter._fOTW.getPhysicalPixelValueFromScreenMouse(ij[0], ij[1]);
-				presenter._view.setPhysicalValue2(pval);
+				// let ij = presenter._fOTW.computeFITSij(coords.skyCoords[0], coords.skyCoords[1]);
+				// presenter._view.setImageCoords(ij[0], ij[1]);
+				// let pval = presenter._fOTW.getPhysicalPixelValueFromScreenMouse(ij[0], ij[1]);
+				// presenter._view.setPhysicalValue2(pval);
 			}
 
 	        
