@@ -461,18 +461,36 @@ class View{
 		let html = "<div id='cutoutContainer'>" +
 				"		<center>FITS cut-out</center>" +
 				"		<label for='minra'>min RA (J2000):</label>" +
-				"		<input type='text' name='minra' id='minra' value='0.21423' placeholder='-- RA degrees --'/>" +
+				"		<input type='text' name='minra' id='minra' value='355.8' placeholder='-- RA degrees --'/>" +
 				"		<label for='stepra'>step RA:</label>" +
-				"		<input type='text' name='stepra' id='stepra' value='0.05' placeholder='-- RA degrees --'/>" +
+				"		<input type='text' name='stepra' id='stepra' value='0.5' placeholder='-- RA degrees --'/>" +
 
 				"		<label for='mindec'>Dec (J2000):</label>" +
-				"		<input type='text' name='mindec' id='mindec' value='-0.88595' placeholder='-- Dec degrees --'/>" +
+				"		<input type='text' name='mindec' id='mindec' value='0.36' placeholder='-- Dec degrees --'/>" +
 				"		<label for='stepdec'>step Dec:</label>" +
-				"		<input type='text' name='stepdec' id='stepdec' value='0.3' placeholder='-- Dec degrees --'/>" +
+				"		<input type='text' name='stepdec' id='stepdec' value='0.52' placeholder='-- Dec degrees --'/>" +
 				"		<input type='button' name='computeCutout' id='computeCutout'  value='go'/>" +
 				"	</div>";
 		return html;
 	}
+
+	// initCutout() {
+		
+	// 	let html = "<div id='cutoutContainer'>" +
+	// 			"		<center>FITS cut-out</center>" +
+	// 			"		<label for='minra'>min RA (J2000):</label>" +
+	// 			"		<input type='text' name='minra' id='minra' value='0.21423' placeholder='-- RA degrees --'/>" +
+	// 			"		<label for='stepra'>step RA:</label>" +
+	// 			"		<input type='text' name='stepra' id='stepra' value='0.05' placeholder='-- RA degrees --'/>" +
+
+	// 			"		<label for='mindec'>Dec (J2000):</label>" +
+	// 			"		<input type='text' name='mindec' id='mindec' value='-0.88595' placeholder='-- Dec degrees --'/>" +
+	// 			"		<label for='stepdec'>step Dec:</label>" +
+	// 			"		<input type='text' name='stepdec' id='stepdec' value='0.3' placeholder='-- Dec degrees --'/>" +
+	// 			"		<input type='button' name='computeCutout' id='computeCutout'  value='go'/>" +
+	// 			"	</div>";
+	// 	return html;
+	// }
 
 	addDownload (fitsUrl) {
 		let a = document.createElement('a');

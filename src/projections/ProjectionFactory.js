@@ -5,11 +5,12 @@
  * 
  * @link   github https://github.com/fab77/fitsontheweb
  * @author Fabrizio Giordano <fabriziogiordano77@gmail.com>
- * import GnomonicProjection from './GnomonicProjection';
+
  */
 
 import {constants} from '../Constants';
 import GnomonicProjection from './GnomonicProjection';
+import MercatorProjection from './MercatorProjection';
 
 class ProjectionFactory {
 
@@ -17,11 +18,13 @@ class ProjectionFactory {
      * 
      * @param {PROJECTIONS} projection 
      */
-    static getProjection(projection) {
+    static getProjection(projection, minra, mindec, deltara, deltadec, fotw) {
 
         switch (projection) {
             case constants.PROJECTIONS.GNOMONIC:
-                return new GnomonicProjection();
+                return new GnomonicProjection(minra, mindec, deltara, deltadec, fotw);
+            case constants.PROJECTIONS.MERCATOR:
+                return new MercatorProjection(minra, mindec, deltara, deltadec, fotw);
             default:
                 throw new TypeError("Projection "+projection+" not supported or recognised");
         }

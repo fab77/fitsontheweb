@@ -10,8 +10,7 @@
  */
 
 import FITSHeader from './FITSHeader';
-import ParseUtils from './ParseUtils';
-const LINEWIDTH = 80;
+
 
 class ParseHeader {
 	
@@ -55,50 +54,42 @@ class ParseHeader {
 	
 	parse () {
 		
-		let length = (this._data.length === undefined ) ? this._data.size : this._data.length;
+		let length = this._data.byteLength;
 		
-		let key;
-		let val;
-
-		let str;
-
-		/**
-		 * TODO check the projection. Since at tne moment only HPX is supported as input FITS, throw an exception if the input is in a different projection
-		 * for the future: create a factory for different possible supported projections 
-		 * (check CTYPEia)
-		 */
-		// setting BZERO and BSCALE  default values.
+		let header = new Uint8Array(this._data, 0, 2880);
+		let textDecoder = new TextDecoder('iso-8859-1');
+		
+		// setting BZERO and BSCALE default values.
 		this._header.setHeaderItem("BZERO", 0);
 		this._header.setHeaderItem("BSCALE", 1);
 		this._header.setHeaderItem("BLANK", undefined);
-		
-		while (this._offset < length){
+
+		for (let i = 0; i < 2880/80; i++) {
+			let u8line = new Uint8Array(header.slice(i*80, i*80 + 80));
+			let line = textDecoder.decode(u8line);
+			let u8key = new  Uint8Array(u8line.slice(0, 7));
+			let key = textDecoder.decode(u8key).trim();
 			
-			str = ParseUtils.getStringAt(this._data, this._offset, LINEWIDTH);
-			this._offset += LINEWIDTH;
-			let eq = str.indexOf('=');
-			key = this.trim(str.substring(0, eq))
-			val = this.trim(str.substring(eq+1, Math.max(str.indexOf('/'), str.length)))
-			
-			if(key.length > 0){
-				if(val.indexOf("'") == 0 || key == "SIMPLE"){
-					// It is a string
-					val = val.substring(1,val.length-2)
-				}else{
-					if(val.indexOf('.') >= 0) {
-						val = parseFloat(val); // Floating point
-					}else {
-						val = parseInt(val); // Integer
-					}
+			let u8val = new  Uint8Array(u8line.slice(10, 80));
+			let val = textDecoder.decode(u8val).trim();
+
+			if(val.indexOf("'") !== 0 && key !== "SIMPLE"){
+				
+				if(val.indexOf('.') >= 0) {
+					val = parseFloat(val); // Floating point
+				}else {
+					val = parseInt(val); // Integer
 				}
-				this._header.setHeaderItem(key, val);
+
 			}
-			if(str.indexOf('END') == 0) {
+
+			this._header.setHeaderItem(key, val);
+
+			console.log(line);
+			if (key == 'END') {
 				break;
 			}
 		}
-		
-		
 		
 		
 		if (typeof this._header.getValue("NAXIS1") == "number") {
@@ -142,19 +133,16 @@ class ParseHeader {
 			this.PVMAX_orig = this._header.getValue("DATAMAX");
 		}
 		
-		// Remove any space padding
-		while(this._offset < length && ParseUtils.getStringAt(this._data, this._offset, 1) == " ") {
-			this._offset++;
-		}
+		this._offset = 2880;
 		console.debug("header offset in bytes: "+this._offset);
 	}
 	
-	trim (s) {
-		s = s.replace(/(^\s*)|(\s*$)/gi,"");
-		s = s.replace(/[ ]{2,}/gi," ");
-		s = s.replace(/\n /,"\n");
-		return s;
-	}
+	// trim (s) {
+	// 	s = s.replace(/(^\s*)|(\s*$)/gi,"");
+	// 	s = s.replace(/[ ]{2,}/gi," ");
+	// 	s = s.replace(/\n /,"\n");
+	// 	return s;
+	// }
 	
 }
 
