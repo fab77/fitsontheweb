@@ -6,3 +6,5 @@ dist/
 *.fits
 *.fits
 *.fits
+samples/equatorial/test.fits
+*.fits
