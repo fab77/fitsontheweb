@@ -61,9 +61,9 @@ class FitsLoader {
             var currentFilePart = file.slice(offset, (offset+chunkSize));
 
             let reader = new FileReader();
-            reader.readAsText(currentFilePart, "iso-8859-1");
-//          reader.readAsText(currentFilePart, "x-user-defined");
-//          reader.readAsText(currentFilePart, "UTF-8");
+            // reader.readAsText(currentFilePart, "iso-8859-1");
+			reader.readAsArrayBuffer(currentFilePart);
+
             reader.onload = function (e) {
             	self._caller.onFitsLoaded(reader.result);
             }

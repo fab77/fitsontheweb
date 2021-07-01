@@ -6,7 +6,8 @@ export const constants = {
     K : 3,
     PROJECTIONS : {
         GNOMONIC: "gnomonic",
-        HEALPIX: "healpix"
+        HEALPIX: "healpix",
+        MERCATOR: "mercator"
     }
 
 }

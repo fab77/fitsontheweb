@@ -231,21 +231,35 @@ class Presenter {
 		
 		$("img").mousemove(function (e) {
 	
-			var x = e.pageX - this.offsetLeft;
-	        var y = e.pageY - this.offsetTop;
+
+
+
+			let x = e.pageX - this.offsetLeft;
+	        let y = e.pageY - this.offsetTop;
+
+			
+			// let x = 446;
+	        // let y = 239;
 	        
-	        let p_value = presenter._fOTW.getPhysicalPixelValueFromScreenMouse(x, y);
-			presenter._view.setPhysicalValue(p_value);
-			let coords = presenter._fOTW.getAstroCoordinatesFromFITS(x, 512 - y);
-			presenter._view.setRADecValue (coords.skyCoords[0], coords.skyCoords[1]);
-			presenter._view.setXYValue (coords.xyCoords[0], coords.xyCoords[1]);
-			presenter._view.setFITSxyValue (x, 512 - y);
-			
-			
-			let ij = presenter._fOTW.computeFITSij(coords.skyCoords[0], coords.skyCoords[1]);
-			presenter._view.setImageCoords(ij[0], ij[1]);
-			let pval = presenter._fOTW.getPhysicalPixelValueFromScreenMouse(ij[0], ij[1]);
-			presenter._view.setPhysicalValue2(pval);
+			let imgWidth = presenter._fOTW.getFITSwidth();
+			let imgHeight = presenter._fOTW.getFITSheight();
+
+			if (x <= imgWidth && y <= imgHeight){
+				let p_value = presenter._fOTW.getPhysicalPixelValueFromScreenMouse(x, y);
+				presenter._view.setPhysicalValue(p_value);
+				let coords = presenter._fOTW.getAstroCoordinatesFromFITS(x, imgHeight - y);
+				presenter._view.setRADecValue (coords.skyCoords[0], coords.skyCoords[1]);
+				presenter._view.setXYValue (coords.xyCoords[0], coords.xyCoords[1]);
+				presenter._view.setFITSxyValue (x, imgHeight - y);
+				
+				
+				let ij = presenter._fOTW.computeFITSij(coords.skyCoords[0], coords.skyCoords[1]);
+				presenter._view.setImageCoords(ij[0], ij[1]);
+				let pval = presenter._fOTW.getPhysicalPixelValueFromScreenMouse(ij[0], ij[1]);
+				presenter._view.setPhysicalValue2(pval);
+			}
+
+	        
 	    });
 	}
 	

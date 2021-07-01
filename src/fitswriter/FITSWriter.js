@@ -30,9 +30,9 @@ class FITSWriter {
 
     }
 
-    run (arrayData, headerDetails) {
+    run (headerDetails) {
         this.prepareHeader(headerDetails);
-        this.preparePayload(arrayData, headerDetails.naxis1, headerDetails.bitpix);
+        this.preparePayload(headerDetails.data);
         this.prepareFITS();
     }
 
@@ -47,10 +47,13 @@ class FITSWriter {
         str += this.formatHeaderLine("BLANK", headerDetails.blank);
         str += this.formatHeaderLine("BSCALE", headerDetails.bscale);
         str += this.formatHeaderLine("BZERO", headerDetails.bzero);
-        str += this.formatHeaderLine("CTYPE1", "RA---TAN");
-        str += this.formatHeaderLine("CTYPE2", "DEC--TAN");
-        str += this.formatHeaderLine("CRPIX1", 0);
-        str += this.formatHeaderLine("CRPIX2", 0);
+
+        str += this.formatHeaderLine("CTYPE1", headerDetails.ctype1);
+        str += this.formatHeaderLine("CTYPE2", headerDetails.ctype2);
+        str += this.formatHeaderLine("CDELT1", headerDetails.cdelt1);
+        str += this.formatHeaderLine("CDELT2", headerDetails.cdelt2);
+        str += this.formatHeaderLine("CRPIX1", headerDetails.crpix1);
+        str += this.formatHeaderLine("CRPIX2", headerDetails.crpix2);
         str += this.formatHeaderLine("CRVAL1", headerDetails.crval1);
         str += this.formatHeaderLine("CRVAL2", headerDetails.crval2);
         str += this.formatHeaderLine("WCSNAME", "Test Gnomonic");
@@ -102,41 +105,31 @@ class FITSWriter {
             str += ' ';
         }
 
-        // value
-        str += "= ";
-        str += value;
-        for (let j = 80; j > 10 + vlen; j--) {
-            str += ' ';
+        if (keyword !== 'END')  {
+            // value
+            str += "= ";
+            str += value;
+            for (let j = 80; j > 10 + vlen; j--) {
+                str += ' ';
+            }
         }
         
         return str;
     }
 
-    preparePayload (arrayData, dataRowLength, bitpix) {
+    preparePayload (arrayData) {
 
-        let finalFits;
-        let dataColsLength = arrayData.length / dataRowLength;
-        let ab;
+        // this._payloadArray = new Uint8Array(arrayData.buffer, 0, arrayData.byteLength);
+        this._payloadArray = arrayData;
+        // TODO TEST!!! Iterate over byte 2 by 2 and apply the 3's bit complement conversion:
+        //  - first byte inverted ( invert all bits)
+        //  - second byte inverted and added by 1 at the LSB
+        // https://www.tutorialspoint.com/two-s-complement
+        // Store the result in a buffer array Uint8 or directly in an arraybuffer of bytes and in the Blob at the end
+        
 
 
-        this._payloadArray = new Uint8Array(arrayData);
 
-        // ab = new ArrayBuffer(dataRowLength * dataColsLength * 2);
-        // this._payloadArray = new Uint8Array(ab);
-
-        // let fr = new FileReader();
-
-        // for (let i = 0; i < dataRowLength; i++) {
-        //     for ( let j = 0; j < dataColsLength; j++) {
-        //         // this._payloadArray[i * dataRowLength + j] = arrayData[i * dataRowLength + j];
-
-        //         let b1 = ParseUtils.getByteAt(arrayData[i * dataRowLength + j], 0);
-        //         let b2 = ParseUtils.getByteAt(arrayData[i * dataRowLength + j], 1);
-        //         this._payloadArray[i * dataRowLength + 2 * j] = b1;
-        //         this._payloadArray[i * dataRowLength + 2 * j + 1] = b2;
-
-        //     }
-        // }
         
     }
 
@@ -151,8 +144,14 @@ class FITSWriter {
         console.debug("this._headerArray.byteLength "+this._headerArray.byteLength);
         console.debug("this._headerArray.length "+this._headerArray.length);
         let bytes = new Uint8Array(this._headerArray.length + this._payloadArray.length);
+        // let bytes = new Int16Array(this._headerArray.length + this._payloadArray.length);
+
         bytes.set(this._headerArray, 0);
         bytes.set(this._payloadArray, this._headerArray.length);
+
+        let test = new Uint16Array(bytes.buffer);
+
+        // this._fitsData = test;
         this._fitsData = bytes;
     }
 
